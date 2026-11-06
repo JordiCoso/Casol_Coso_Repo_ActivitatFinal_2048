@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
-enum NombreIconos { gota, correr, hierba }
+class NombreIconos {
+  NombreIconos._nollamar();
 
-const List<IconData> opcionesIconos = <IconData>[
-  Icons.water_drop,
-  Icons.directions_run,
-  Icons.grass,
-];
+  static const gota = 'Gota';
+  static const correr = 'Correr';
+  static const hierba = 'Hierba';
+}
+
+const Map<String, IconData> opcionesIconos = {
+  NombreIconos.gota: Icons.water_drop,
+  NombreIconos.correr: Icons.directions_run,
+  NombreIconos.hierba: Icons.grass,
+};
