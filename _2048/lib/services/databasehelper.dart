@@ -47,7 +47,7 @@ class Databasehelper {
   /// Crea el archivo y la primera vez usa [creacionBaseDatos] para
   /// ejecutar los SQL de creación de tablas.
   Future<Database> _generarBase() async {
-    final ruta = join(await getDatabasesPath(), 'habitos.db');
+    final ruta = join(await getDatabasesPath(), 'game2048.db');
 
     var baseCreada = await openDatabase(
       ruta,
@@ -63,67 +63,60 @@ class Databasehelper {
 
   // Claves en variables para juntarlas y evitar errores
 
-  static const tablaHabitos = 'habitos';
-
-  static const columnaHabitosId = 'hid';
-  static const columnaHabitosNombre = 'nombre';
-  static const columnaHabitosColor = 'color';
-  static const columnaHabitosCompletado = 'completado';
-  static const columnaHabitosIcono = 'icono';
-  static const columnaHabitosUsuarioFK = 'usuario_fk';
-
   static const tablaUsuarios = 'usuarios';
 
+  static const columnaUsuariosId = 'usuario_id';
   static const columnaUsuariosUsuario = 'usuario';
-  static const columnaUsuariosNombre = 'nombre';
-  static const columnaUsuariosApellidos = 'apellidos';
+  static const columnaUsuariosFechaRegistro = 'fecha_registro';
   static const columnaUsuariosEmail = 'email';
   static const columnaUsuariosContrasena = 'contrasena';
-  static const columnaUsuariosFechacreacion = 'fecha_creacion';
-  static const columnaUsuariosRol = 'rol';
 
-  static const tablaEstadisticas = 'estadisticas';
+  static const tablaPartidas = 'partidas';
 
-  static const columnaEstadisticasId = 'eid';
-  static const columnaEstadisticasFechacompletado = 'fecha_completado';
-  static const columnaEstadisticasRachaactual = 'racha_actual';
-  static const columnaEstadisticasDiascompletados = 'dias_completados';
-  static const columnaEstadisticasHabitoidFK = 'habito_id_fk';
-  static const columnaEstadisticasUsuarioFK = 'usuario_fk';
+  static const columnaPartidasId = 'partidas_id';
+  static const columnaPartidasUsuario = 'usuario';
+  static const columnaPartidasPuntuacion = 'puntuacion';
+  static const columnaPartidasFichaMaxima = 'ficha_maxima';
+  static const columnaPartidasMovimientos = 'movimientos';
+  static const columnaPartidasDuracionSegundos = 'duracion_segundos';
+  static const columnaPartidasFecha = 'fecha';
+
+  static const tablaPartidaGuardada = 'partida_guardada';
+
+  static const columnaPartidaGuardadaId = 'guardada_id';
+  static const columnaPartidaGuardadaTablero = 'tablero';
+  static const columnaPartidaGuardadaPuntuacion = 'puntuacion';
+  static const columnaPartidaGuardadaMovimientos = 'movimientos';
+  static const columnaPartidaGuardadaSegundosTranscurridos = 'segundos_transcurridos';
 
   Future<void> creacionBaseDatos(Database db, int version) async {
     await db.execute(
       'CREATE TABLE $tablaUsuarios ('
-      '$columnaUsuariosUsuario TEXT PRIMARY KEY, '
-      '$columnaUsuariosNombre TEXT NOT NULL, '
-      '$columnaUsuariosApellidos TEXT NOT NULL, '
+      '$columnaUsuariosId INTEGER PRIMARY KEY AUTOINCREMENT, '
+      '$columnaUsuariosUsuario TEXT NOT NULL, '
+      '$columnaUsuariosFechaRegistro TEXT NOT NULL, '
       '$columnaUsuariosEmail TEXT NOT NULL UNIQUE, ' // Lo pongo unique para q no se pueda registrar dos usuarios con el mismo correo.
-      '$columnaUsuariosContrasena TEXT NOT NULL, '
-      '$columnaUsuariosFechacreacion TEXT NOT NULL, '
-      '$columnaUsuariosRol TEXT NOT NULL)',
+      '$columnaUsuariosContrasena TEXT NOT NULL)',
     );
 
     await db.execute(
-      'CREATE TABLE $tablaHabitos ('
-      '$columnaHabitosId INTEGER PRIMARY KEY AUTOINCREMENT, '
-      '$columnaHabitosNombre TEXT NOT NULL, '
-      '$columnaHabitosColor TEXT NOT NULL, ' // Lo guardo como texto para almacenar los distintos colores juntos.
-      '$columnaHabitosIcono INTEGER NOT NULL, ' //lo guardo como numero para almacenar los distintos iconos
-      '$columnaHabitosCompletado INTEGER NOT NULL, '
-      '$columnaHabitosUsuarioFK TEXT NOT NULL, '
-      'FOREIGN KEY ($columnaHabitosUsuarioFK) REFERENCES $tablaUsuarios($columnaUsuariosUsuario) ON DELETE CASCADE)',
+      'CREATE TABLE $tablaPartidas ('
+      '$columnaPartidasId INTEGER PRIMARY KEY AUTOINCREMENT, '
+      '$columnaPartidasUsuario TEXT NOT NULL, '
+      '$columnaPartidasPuntuacion INTEGER NOT NULL, '
+      '$columnaPartidasFichaMaxima INTEGER NOT NULL, '
+      '$columnaPartidasMovimientos INTEGER NOT NULL,'
+      '$columnaPartidasDuracionSegundos INTEGER NOT NULL, '
+      '$columnaPartidasFecha TEXT NOT NULL, )'
     );
 
     await db.execute(
-      'CREATE TABLE $tablaEstadisticas ('
-      '$columnaEstadisticasId INTEGER PRIMARY KEY AUTOINCREMENT, '
-      '$columnaEstadisticasFechacompletado TEXT, '
-      '$columnaEstadisticasRachaactual INTEGER NOT NULL, '
-      '$columnaEstadisticasDiascompletados INTEGER NOT NULL, '
-      '$columnaEstadisticasUsuarioFK TEXT NOT NULL, '
-      '$columnaEstadisticasHabitoidFK INTEGER NOT NULL UNIQUE, '
-      'FOREIGN KEY ($columnaEstadisticasUsuarioFK) REFERENCES $tablaUsuarios($columnaUsuariosUsuario) ON DELETE CASCADE, '
-      'FOREIGN KEY ($columnaEstadisticasHabitoidFK) REFERENCES $tablaHabitos($columnaHabitosId) ON DELETE CASCADE)',
+      'CREATE TABLE $tablaPartidaGuardada ('
+      '$columnaPartidaGuardadaId INTEGER PRIMARY KEY, '
+      '$columnaPartidaGuardadaTablero TEXT NOT NULL, '
+      '$columnaPartidaGuardadaPuntuacion INTEGER NOT NULL, '
+      '$columnaPartidaGuardadaMovimientos INTEGER NOT NULL, '
+      '$columnaPartidaGuardadaSegundosTranscurridos INTEGER NOT NULL, )',
     );
 
     //creamos el admin de prueba
@@ -140,22 +133,57 @@ class Databasehelper {
 
   //creamos la funcion para insertar el usuario
   Future<int> insertarUsuario(
+    int uid,
     String usuario,
-    String nombre,
-    String apellidos,
+    String fechaRegistro,
     String email,
     String contrasena,
-    String fechaCreacion,
-    String rol,
   ) async {
     int resultado = await _baseDeDatos.insert(tablaUsuarios, {
+      columnaUsuariosId: uid,
       columnaUsuariosUsuario: usuario,
-      columnaUsuariosNombre: nombre,
-      columnaUsuariosApellidos: apellidos,
+      columnaUsuariosFechaRegistro: fechaRegistro,
       columnaUsuariosEmail: email,
       columnaUsuariosContrasena: contrasena,
-      columnaUsuariosFechacreacion: fechaCreacion,
-      columnaUsuariosRol: rol,
+    });
+
+    return resultado;
+  }
+
+  //TODO funcion para insertar partidas y partidas guardadas
+  Future<int> instertarPartida(
+      int pid,
+      String usuario,
+      int puntuacion,
+      int fichaMaxima,
+      int movimientos,
+      int duracionSegundos,
+      String fecha,
+      ) async {
+    int resultado = await _baseDeDatos.insert(tablaPartidas, {
+      columnaPartidasId: pid,
+      columnaPartidasUsuario: usuario,
+      columnaPartidasPuntuacion: puntuacion,
+      columnaPartidasFichaMaxima: fichaMaxima,
+      columnaPartidasMovimientos: movimientos,
+      columnaPartidasDuracionSegundos: duracionSegundos,
+      columnaPartidasFecha: fecha,
+    });
+
+    return resultado;
+  }
+
+  Future<int> insertarPartidaGuardada(
+      int pgid,
+      String guardadaTablero,
+      int guardadaPuntuacion,
+      int guardadaMovimiento,
+      int segundosTranscurridos,
+      ) async {
+    int resultado = await _baseDeDatos.insert(tablaPartidaGuardada, {
+      columnaPartidaGuardadaId: pgid,
+      columnaPartidaGuardadaTablero: guardadaTablero,
+      columnaPartidaGuardadaPuntuacion: guardadaPuntuacion,
     });
 
     return resultado;
