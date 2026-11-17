@@ -5,22 +5,18 @@ class BotonPrincipal extends StatelessWidget {
   final String texto;
   final VoidCallback pulsar;
 
-  const BotonPrincipal ({super.key, required this.texto, required this.pulsar});
+  const BotonPrincipal({super.key, required this.texto, required this.pulsar});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(
-          horizontal: 32,
-          vertical: 16,
-        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        padding: EdgeInsets.symmetric(horizontal: 80, vertical: 13),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))
       ),
       onPressed: pulsar,
-      child: Text(
-        texto,
-        style: TextStyle(fontSize: 18),
-      ),
+      child: Text(texto, style: TextTheme.of(context).labelLarge),
     );
   }
 }
