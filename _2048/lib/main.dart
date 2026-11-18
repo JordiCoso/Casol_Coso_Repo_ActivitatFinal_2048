@@ -1,3 +1,5 @@
+import 'package:_2048/routes.dart';
+import 'package:_2048/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -51,7 +53,7 @@ class _MyAppState extends State<MyApp> {
           widget._preferenciasService.obtenerTemaOscuro(),
         );
 
-        return MaterialApp(
+        return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: 'VaporBooking',
 
@@ -100,8 +102,8 @@ class _MyAppState extends State<MyApp> {
             checkboxTheme: CheckboxThemeData(),
 
             colorScheme: ColorScheme.light(
-              primary: colores[NombreColores.verdePrincipal]!,
-              secondary: colores[NombreColores.verdeSecundario]!,
+              primary: colores[NombreColores.principal]!,
+              secondary: colores[NombreColores.secundario]!,
               surface: colores[NombreColores.superficie]!,
             ),
           ),
@@ -111,10 +113,9 @@ class _MyAppState extends State<MyApp> {
             databasehelper: widget._databasehelper,
             usuario: Usuario(nombre: 'aa', numeroHabitos: 2),
           ),*/
-          home: LoginPage(
-            preferenciasService: widget._preferenciasService,
-            databasehelper: widget._databasehelper,
-          ),
+          routerConfig: router,
+
+
         );
       },
     );

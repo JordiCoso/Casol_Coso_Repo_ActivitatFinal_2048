@@ -1,11 +1,13 @@
-class Cubos {
+class Cuadrado {
   late ({int x, int y}) posicion;
 
   final int valor;
 
-  Cubos({required this.posicion, required this.valor});
+  Cuadrado.vacio() : valor = 0, posicion = (x: 0, y: 0);
 
-  Cubos.fromBBDD(String posicion, this.valor) {
+  Cuadrado({required this.posicion, required this.valor});
+
+  Cuadrado.fromBBDD(String posicion, this.valor) {
     late final int x;
     late final int y;
 
@@ -23,7 +25,7 @@ class Cubos {
   ({String posicion, int valor}) toBBDD() {
     return (
       posicion: posicion.x.toString() + posicion.y.toString(),
-      valor: this.valor,
+      valor: valor,
     );
   }
 

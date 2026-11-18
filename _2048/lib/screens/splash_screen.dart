@@ -1,5 +1,9 @@
+import 'package:_2048/screens/pantalla_principal.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../models/usuario.dart';
+import '../routes.dart';
 import '/models/colores.dart';
 import '/models/iconos.dart';
 import '/services/preferenciasservice.dart';
@@ -54,7 +58,7 @@ class SplashScreen extends StatelessWidget {
                               style: ElevatedButton.styleFrom(
                                 side: BorderSide(
                                   width: 1.5,
-                                  color: colores[NombreColores.verdePrincipal]!,
+                                  color: colores[NombreColores.principal]!,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -66,8 +70,7 @@ class SplashScreen extends StatelessWidget {
                                 'Modo claro',
                                 style: Theme.of(context).textTheme.labelLarge
                                     ?.copyWith(
-                                      color:
-                                          colores[NombreColores.verdePrincipal],
+                                      color: colores[NombreColores.principal],
                                     ),
                                 textAlign: TextAlign.center,
                               ),
@@ -77,7 +80,7 @@ class SplashScreen extends StatelessWidget {
                               onPressed: () => Navigator.pop(context, true),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    colores[NombreColores.verdePrincipal]!,
+                                    colores[NombreColores.principal]!,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -107,13 +110,17 @@ class SplashScreen extends StatelessWidget {
             ),
             const Expanded(flex: 3, child: SizedBox()),
             const Image(
-              image: AssetImage('images/logo_VaporBooking_SinFondo.png'),
+              image: AssetImage('images/logo_2048_sinFondo.png'),
               height: 150,
               width: 150,
             ),
             Text('VaporBooking', style: Theme.of(context).textTheme.titleLarge),
             const Expanded(flex: 2, child: SizedBox()),
-            BotonPrincipal(texto: 'Comenzar', pulsar: () {}),
+            BotonPrincipal(
+              texto: 'Comenzar',
+              pulsar: () =>
+                  context.goNamed(Rutas.principal, extra: _preferenciasService),
+            ),
             const Expanded(flex: 2, child: SizedBox()),
           ],
         ),
