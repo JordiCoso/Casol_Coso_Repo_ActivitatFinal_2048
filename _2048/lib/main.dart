@@ -1,20 +1,20 @@
+import 'package:_2048/routes.dart';
+import 'package:_2048/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
-import '/services/databasehelper.dart';
-import 'screens/login_page.dart';
-import 'services/preferenciasservice.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import '/services/databasehelper.dart';
+import 'models/colores.dart';
+import 'models/usuario.dart';
+import 'services/preferenciasservice.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //creamos el servicio de preferencias.
-  PreferenciasService preferenciasService = await PreferenciasService.crear();
-  //aumentamos el número de veces que se abre la aplicación.
-  preferenciasService.aumentarNumeroAperturar();
+  final PreferenciasService preferenciasService =
+      await PreferenciasService.crear();
 
-  //guardamos la fecha y hora de la última apertura.
-  preferenciasService.registrarApertura();
-
-  Databasehelper databasehelper = await Databasehelper.crear();
+  final Databasehelper databasehelper = await Databasehelper.crear();
 
   //iniciamos la aplicación con el servicio de preferencias.
   runApp(
@@ -28,6 +28,7 @@ Future<void> main() async {
 class MyApp extends StatefulWidget {
   //servicio que utilizamos para recuperar las preferencias.
   final PreferenciasService _preferenciasService;
+
   final Databasehelper _databasehelper;
 
   const MyApp({
@@ -48,67 +49,73 @@ class _MyAppState extends State<MyApp> {
       valueListenable: widget._preferenciasService.temaOscuro,
 
       builder: (context, temaOscuro, child) {
-        return ValueListenableBuilder<double>(
-          valueListenable: widget._preferenciasService.tamanoLetra,
+        final Map<String, Color> colores = obtenerEsquemaColoresActual(
+          widget._preferenciasService.obtenerTemaOscuro(),
+        );
 
-          builder: (context, tamanoLetra, child) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'HabitosApp',
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'VaporBooking',
 
-              //colores de la aplicación en modo claro.
-              theme: ThemeData(
-                scaffoldBackgroundColor: Color(0xFFF5F7F2),
+          theme: ThemeData(
+            scaffoldBackgroundColor: colores[NombreColores.fondo],
 
-                colorScheme: ColorScheme.light(
-                  primary: Color(0xFF72917C),
-                  secondary: Color(0xFFA2BBA8),
-                  surface: Color(0xFFFFFFFF),
-                ),
-
-                //colores de la barra superior.
-                appBarTheme: AppBarTheme(
-                  backgroundColor: Color(0xFFF5F7F2),
-                  foregroundColor: Color(0xFF263D32),
-                ),
+            textTheme: TextTheme(
+              titleLarge: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                fontSize: 28,
+                color: colores[NombreColores.textoPrincipal],
               ),
-
-              //colores de la aplicación en modo oscuro.
-              darkTheme: ThemeData(
-                scaffoldBackgroundColor: Color(0xFF171F1B),
-
-                colorScheme: ColorScheme.dark(
-                  primary: Color(0xFFA2BBA8),
-                  secondary: Color(0xFF72917C),
-                  surface: Color(0xFF28352E),
-                ),
-
-                //colores de la barra superior en modo oscuro.
-                appBarTheme: AppBarTheme(
-                  backgroundColor: Color(0xFF171F1B),
-                  foregroundColor: Color(0xFFE9F1EA),
-                ),
+              titleMedium: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                color: colores[NombreColores.textoPrincipal],
               ),
+              bodyMedium: GoogleFonts.poppins(
+                fontWeight: FontWeight.normal,
+                fontSize: 14,
+                color: colores[NombreColores.textoSecundario],
+              ),
+              labelLarge: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: colores[NombreColores.superficie],
+              ),
+            ),
 
-              //seleccionamos el tema guardado.
-              themeMode: temaOscuro ? ThemeMode.dark : ThemeMode.light,
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(
+                  width: 1.5,
+                  color: colores[NombreColores.bordes]!,
+                ),
+                elevation: 10,
+                minimumSize: Size.square(10),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                iconColor: colores[NombreColores.textoSecundario]!,
+              ),
+            ),
 
-              //ahora vamos a aplicar el tamaño de la letra a TODOS los textos
-              builder: (context, child) {
-                return MediaQuery(
-                  data: MediaQuery.of(
-                    context,
-                  ).copyWith(textScaler: TextScaler.linear(tamanoLetra / 14)),
-                  child: child!, //aquí indicamos que child no es null, poniendo el !
-                );
-              },
+            checkboxTheme: CheckboxThemeData(),
 
-              //comprobamos si el usuario ya se ha registrado.
-              home: LoginPage(preferenciasService: widget._preferenciasService,
-                  databasehelper: widget._databasehelper),
-            );
+            colorScheme: ColorScheme.light(
+              primary: colores[NombreColores.principal]!,
+              secondary: colores[NombreColores.secundario]!,
+              surface: colores[NombreColores.superficie]!,
+            ),
+          ),
 
-          },
+          /*home: PantallaPrincipal(
+            preferenciasService: widget._preferenciasService,
+            databasehelper: widget._databasehelper,
+            usuario: Usuario(nombre: 'aa', numeroHabitos: 2),
+          ),*/
+          routerConfig: router,
+
+
         );
       },
     );

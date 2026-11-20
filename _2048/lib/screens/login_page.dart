@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '/screens/habitos_page.dart';
+import '/models/colores.dart';
+import '/screens/pantalla_principal.dart';
+
 import '/screens/registro_page.dart';
 import '/services/databasehelper.dart';
 import '/services/preferenciasservice.dart';
@@ -10,14 +12,14 @@ import '../models/usuario.dart';
 
 class LoginPage extends StatefulWidget {
   final PreferenciasService _preferenciasService;
+
   final Databasehelper _databasehelper;
 
   const LoginPage({
     super.key,
-    required PreferenciasService preferenciasService,
-    required Databasehelper databasehelper,
-  }) : _preferenciasService = preferenciasService,
-       _databasehelper = databasehelper;
+    required this._preferenciasService,
+    required this._databasehelper,
+  });
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -73,18 +75,26 @@ class _LoginPageState extends State<LoginPage> {
       mensajeError = '';
     });
 
-    //cogemos el nombre y rol desde sqflite
+    //cogemos los datos del usuario desde sqflite
     Usuario usuario = Usuario(
-      nombre: datosUsuario[Databasehelper.columnaUsuariosUsuario] as String,
-      numeroHabitos: 1,
+      email: datosUsuario[Databasehelper.columnaUsuariosEmail] as String,
+      nombre: datosUsuario[Databasehelper.columnaUsuariosNombre] as String,
+      apellidos:
+          datosUsuario[Databasehelper.columnaUsuariosApellidos] as String,
+      telefono: datosUsuario[Databasehelper.columnaUsuariosTelefono] as String,
+      contrasena:
+          datosUsuario[Databasehelper.columnaUsuariosContrasena] as String,
+      fechaCreacion:
+          datosUsuario[Databasehelper.columnaUsuariosFechacreacion] as String,
       rol: datosUsuario[Databasehelper.columnaUsuariosRol] as String,
+      puntos: datosUsuario[Databasehelper.columnaUsuariosPuntos] as int,
     );
 
     //si los datos coinciden, abrimos ya la pantalla principal
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => Principal(
+        builder: (context) => PantallaPrincipal(
           preferenciasService: widget._preferenciasService,
           databasehelper: widget._databasehelper,
           usuario: usuario,
@@ -95,6 +105,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colores = obtenerEsquemaColoresActual(
+      widget._preferenciasService.obtenerTemaOscuro(),
+    );
+
     return Scaffold(
       appBar: AppBar(title: Text('Iniciar sesión')),
       body: SingleChildScrollView(
@@ -103,31 +117,34 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             CampoTextoApp(etiqueta: 'Usuario', controller: usuarioController),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             CampoTextoApp(
               etiqueta: 'Contraseña',
               controller: contrasenaController,
               ocultarTexto: true,
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             //mostramos mensaje error por si hay alguno
             if (mensajeError.isNotEmpty)
-              Text(mensajeError, style: TextStyle(color: Colors.red)),
+              Text(mensajeError, style: TextStyle(color: colores[NombreColores.estadoError])),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             BotonPrincipal(texto: 'Iniciar sesión', pulsar: iniciarSesion),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             //si el usuario no tiene cuent, le damos la opcion de reigstrarse
             TextButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => RegistroPage()),
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        RegistroPage(databasehelper: widget._databasehelper, preferenciasService: widget._preferenciasService,),
+                  ),
                 );
               },
               child: Text('Regístrate si no tienes cuenta'),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '/services/databasehelper.dart';
 
-import '/screens/bienvenida.dart';
-import '../services/preferenciasservice.dart';
+import '/services/preferenciasservice.dart';
+import 'login_page.dart';
 
 class PantallaAjustes extends StatefulWidget {
   //recibimos el preferenciasService.
@@ -21,7 +22,6 @@ class PantallaAjustes extends StatefulWidget {
 
 class _PantallaAjustesState extends State<PantallaAjustes> {
   bool _temaOscuro = false;
-  bool _ocultarCompletado = false;
   double _tamanoLetra = 14;
 
   //cargamos los ajustes guardados al abrir la pantalla.
@@ -31,7 +31,6 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
 
     _temaOscuro = widget.preferenciasService.obtenerTemaOscuro();
     _tamanoLetra = widget.preferenciasService.obtenerTamanoLetra();
-    _ocultarCompletado = widget.preferenciasService.obtenerOcultarCompletados();
   }
 
   void _cambiarTemaOscuro(bool nuevoTema) {
@@ -56,17 +55,6 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
     ); //guardamos el tamaño.
   }
 
-  void _cambiarOcultarCompletado(bool nuevoHabitoCompletado) {
-    //cambia la opción de ocultar hábitos.
-    setState(() {
-      _ocultarCompletado = nuevoHabitoCompletado;
-    });
-
-    widget.preferenciasService.guardarOcultarCompletados(
-      nuevoHabitoCompletado,
-    ); //guardamos ocultar hábitos.
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +71,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
               'Ajustes de personalización',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
 
             Text(
               'Configuración',
@@ -110,7 +98,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
 
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
 
                       Text(
                         'Apariencia',
@@ -157,7 +145,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
               ),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             //tarjeta de configuración de hábitos.
             Container(
@@ -178,7 +166,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
                         color: Theme.of(context).colorScheme.primary,
                       ),
 
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
 
                       Text(
                         'Hábitos',
@@ -189,21 +177,11 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
                       ),
                     ],
                   ),
-
-                  Divider(),
-
-                  //interruptor para ocultar hábitos completados.
-                  SwitchListTile(
-                    title: Text('Ocultar completados'),
-                    subtitle: Text('Ocultar los hábitos terminados'),
-                    value: _ocultarCompletado,
-                    onChanged: _cambiarOcultarCompletado,
-                  ),
                 ],
               ),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             //tarjeta para borrar los datos.
             Container(
@@ -221,7 +199,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
                     children: [
                       Icon(Icons.delete_outline, color: Colors.red),
 
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
 
                       Text(
                         'Datos de la aplicación',
@@ -280,7 +258,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Bienvenida(
+                          builder: (context) => LoginPage(
                             preferenciasService: widget.preferenciasService,
                             databasehelper: widget.databasehelper,
                           ),
