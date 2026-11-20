@@ -13,7 +13,7 @@ import '../models/usuario.dart';
 class LoginPage extends StatefulWidget {
   final PreferenciasService _preferenciasService;
 
-  final Databasehelper _databasehelper;
+  final DatabaseHelper _databasehelper;
 
   const LoginPage({
     super.key,
@@ -77,17 +77,17 @@ class _LoginPageState extends State<LoginPage> {
 
     //cogemos los datos del usuario desde sqflite
     Usuario usuario = Usuario(
-      email: datosUsuario[Databasehelper.columnaUsuariosEmail] as String,
-      nombre: datosUsuario[Databasehelper.columnaUsuariosNombre] as String,
+      email: datosUsuario[DatabaseHelper.columnaUsuariosEmail] as String,
+      nombre: datosUsuario[DatabaseHelper.columnaUsuariosNombre] as String,
       apellidos:
-          datosUsuario[Databasehelper.columnaUsuariosApellidos] as String,
-      telefono: datosUsuario[Databasehelper.columnaUsuariosTelefono] as String,
+          datosUsuario[DatabaseHelper.columnaUsuariosApellidos] as String,
+      telefono: datosUsuario[DatabaseHelper.columnaUsuariosTelefono] as String,
       contrasena:
-          datosUsuario[Databasehelper.columnaUsuariosContrasena] as String,
+          datosUsuario[DatabaseHelper.columnaUsuariosContrasena] as String,
       fechaCreacion:
-          datosUsuario[Databasehelper.columnaUsuariosFechacreacion] as String,
-      rol: datosUsuario[Databasehelper.columnaUsuariosRol] as String,
-      puntos: datosUsuario[Databasehelper.columnaUsuariosPuntos] as int,
+          datosUsuario[DatabaseHelper.columnaUsuariosFechacreacion] as String,
+      rol: datosUsuario[DatabaseHelper.columnaUsuariosRol] as String,
+      puntos: datosUsuario[DatabaseHelper.columnaUsuariosPuntos] as int,
     );
 
     //si los datos coinciden, abrimos ya la pantalla principal

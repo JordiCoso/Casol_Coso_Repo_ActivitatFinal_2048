@@ -1,7 +1,23 @@
+import 'dart:async';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 class PreferenciasService {
+  /// La instancia unica de preferenciasService;
+  static PreferenciasService? _preferenciasService;
+
+  ///!! SI USAS ESTO SIN HABER CREADO ANTES LA CLASE DARA ERROR !!
+  static PreferenciasService get instanciaPS {
+    final instancia = _preferenciasService;
+    if (instancia == null) {
+      throw Exception(
+        'No has inicializado la clase preferenciasService antes de hacer este get',
+      );
+    }
+    return instancia;
+  }
+
   /// Instancia de preferencias para uso interno.
   late SharedPreferences _preferencias;
 
@@ -15,7 +31,12 @@ class PreferenciasService {
   /// variable.
   /// Hay que hacer esto porque el constructor normal no puede ser async.
 
-  static Future<PreferenciasService> crear() async {
+  static FutureOr<PreferenciasService> crear() async {
+    final PreferenciasService? instancia = _preferenciasService;
+    if (instancia != null) {
+      return instancia;
+    }
+
     final inicializando = PreferenciasService._crear();
 
     inicializando._preferencias = await SharedPreferences.getInstance();

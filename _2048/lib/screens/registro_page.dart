@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 import '/widgets/campo_texto_app.dart';
 
 class RegistroPage extends StatefulWidget {
-  final Databasehelper _databasehelper;
+  final DatabaseHelper _databasehelper;
   final PreferenciasService _preferenciasService;
 
   const RegistroPage({
