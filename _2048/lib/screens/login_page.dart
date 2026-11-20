@@ -3,7 +3,7 @@ import '/models/colores.dart';
 import '/screens/pantalla_principal.dart';
 
 import '/screens/registro_page.dart';
-import '/services/databasehelper.dart';
+import '../data/databasehelper.dart';
 import '/services/preferenciasservice.dart';
 import '/widgets/boton_principal.dart';
 import '/widgets/campo_texto_app.dart';

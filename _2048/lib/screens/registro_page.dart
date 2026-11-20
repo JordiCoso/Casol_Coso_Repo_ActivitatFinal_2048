@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '/services/preferenciasservice.dart';
 
 import '../models/colores.dart';
-import '/services/databasehelper.dart';
+import '../data/databasehelper.dart';
 import '/widgets/boton_principal.dart';
 
 import 'package:intl/intl.dart';

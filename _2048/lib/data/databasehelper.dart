@@ -10,6 +10,9 @@ class Databasehelper {
   /// La base de datos unica para uso interno.
   late final Database _baseDeDatos;
 
+  /// permitimos que los dao accedan a la bbdd
+  Database get baseDeDatos => _baseDeDatos;
+
   /// Constructor privado para evitar que se pueda llamar a new.
   Databasehelper._crear();
 
@@ -44,7 +47,7 @@ class Databasehelper {
   /// Crea el archivo y la primera vez usa [creacionBaseDatos] para
   /// ejecutar los SQL de creación de tablas.
   Future<Database> _generarBase() async {
-    final ruta = join(await getDatabasesPath(), 'vaporbooking.db');
+    final ruta = join(await getDatabasesPath(), 'game2048.db');
 
     final baseCreada = await openDatabase(
       ruta,
@@ -114,7 +117,7 @@ class Databasehelper {
       '$columnaPartidasId INTEGER PRIMARY KEY AUTOINCREMENT,'
       '$columnaPartidasUsuario TEXT NOT NULL,'
       '$columnaPartidasPuntuacion INTEGER NOT NULL,'
-      '$columnaPartidasFichamaxima INTEGER NOT NULL UNIQUE,'
+      '$columnaPartidasFichamaxima INTEGER NOT NULL,'
       '$columnaPartidasMovimientos INTEGER NOT NULL,'
       '$columnaPartidasDuracionsegundos INTEGER NOT NULL,'
       '$columnaPartidasFecha TEXT NOT NULL)',
@@ -223,19 +226,4 @@ class Databasehelper {
 
     return null;
   }*/
-
-  //obtenemos los datos de un cliente por su email
-  Future<Map<String, Object?>?> obtenerUsuarioPorEmail(String email) async {
-    final resultado = await _baseDeDatos.query(
-      tablaUsuarios,
-      where: '$columnaUsuariosEmail = ?',
-      whereArgs: [email],
-    );
-
-    if (resultado.isNotEmpty) {
-      return resultado[0];
-    }
-
-    return null;
-  }
 }

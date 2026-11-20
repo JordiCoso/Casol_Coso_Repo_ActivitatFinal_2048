@@ -5,7 +5,7 @@ import '/models/colores.dart';
 import '/services/preferenciasservice.dart';
 
 import '../models/usuario.dart';
-import '../services/databasehelper.dart';
+import '../data/databasehelper.dart';
 
 class PantallaPrincipal extends StatefulWidget {
   final PreferenciasService _preferenciasService;

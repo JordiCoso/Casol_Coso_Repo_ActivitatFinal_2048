@@ -1,6 +1,6 @@
 import 'package:_2048/screens/pantalla_principal.dart';
 import 'package:_2048/screens/splash_screen.dart';
-import 'package:_2048/services/databasehelper.dart';
+import 'package:_2048/data/databasehelper.dart';
 import 'package:_2048/services/preferenciasservice.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

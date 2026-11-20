@@ -3,7 +3,7 @@ import 'package:_2048/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '/services/databasehelper.dart';
+import 'data/databasehelper.dart';
 import 'models/colores.dart';
 import 'models/usuario.dart';
 import 'services/preferenciasservice.dart';
