@@ -14,7 +14,7 @@ Future<void> main() async {
   final PreferenciasService preferenciasService =
       await PreferenciasService.crear();
 
-  final Databasehelper databasehelper = await Databasehelper.crear();
+  final DatabaseHelper databasehelper = await DatabaseHelper.crear();
 
   //iniciamos la aplicación con el servicio de preferencias.
   runApp(
@@ -29,7 +29,7 @@ class MyApp extends StatefulWidget {
   //servicio que utilizamos para recuperar las preferencias.
   final PreferenciasService _preferenciasService;
 
-  final Databasehelper _databasehelper;
+  final DatabaseHelper _databasehelper;
 
   const MyApp({
     super.key,

@@ -8,7 +8,7 @@ import 'login_page.dart';
 class PantallaAjustes extends StatefulWidget {
   //recibimos el preferenciasService.
   final PreferenciasService preferenciasService;
-  final Databasehelper databasehelper;
+  final DatabaseHelper databasehelper;
 
   const PantallaAjustes({
     super.key,

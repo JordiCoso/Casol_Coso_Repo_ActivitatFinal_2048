@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-
-import '../data/usuario_dao.dart';
-import '../services/contrasena_service.dart';
 import '/models/colores.dart';
 import '/screens/pantalla_principal.dart';
 
@@ -16,7 +13,7 @@ import '../models/usuario.dart';
 class LoginPage extends StatefulWidget {
   final PreferenciasService _preferenciasService;
 
-  final Databasehelper _databasehelper;
+  final DatabaseHelper _databasehelper;
 
   const LoginPage({
     super.key,
@@ -29,18 +26,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  //utilizamos el dao para consultar los usuarios
-  late final UsuarioDao _usuarioDao;
-
-  //utilizamos el servicio para comprobar las contraseñas
-  final ContrasenaService _contrasenaService = ContrasenaService();
-
-  @override
-  void initState() {
-    super.initState();
-    _usuarioDao = UsuarioDao(widget._databasehelper);
-  }
-
   //controllers para recuperar datos del login
   final TextEditingController usuarioController = TextEditingController();
   final TextEditingController contrasenaController = TextEditingController();
@@ -70,39 +55,40 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    //buscamos el usuario por su nombre en la bbdd
-    final Usuario? usuario = await _usuarioDao.obtenerUsuarioPorNombre(
-      usuarioController.text.trim(),
-    );
+    //consultamos en sqflite si el usuario y la contraseña coinciden
+    Map<String, Object?>? datosUsuario = await widget._databasehelper
+        .iniciarSesion(
+          usuarioController.text.trim(),
+          contrasenaController.text.trim(),
+        );
 
     if (!mounted) return;
 
-    //comprobamos si el usuario existe
-    if (usuario == null) {
+    //si no se encuentra el usuario, mostraremos un mensaje de error
+    if (datosUsuario == null) {
       setState(() {
         mensajeError = 'Usuario o contraseña incorrectos';
       });
       return;
     }
-
-    //comprobamos la contraseña con el hash guardado
-    final bool contrasenaCorrecta = await _contrasenaService
-        .comprobarContrasena(contrasenaController.text, usuario.contrasena);
-
-    if (!mounted) return;
-
-    //mostramos un error si la contraseña no coincide
-    if (!contrasenaCorrecta) {
-      setState(() {
-        mensajeError = 'Usuario o contraseña incorrectos';
-      });
-      return;
-    }
-
-    //limpiamos el mensaje de error si el login es correcto
     setState(() {
       mensajeError = '';
     });
+
+    //cogemos los datos del usuario desde sqflite
+    Usuario usuario = Usuario(
+      email: datosUsuario[DatabaseHelper.columnaUsuariosEmail] as String,
+      nombre: datosUsuario[DatabaseHelper.columnaUsuariosNombre] as String,
+      apellidos:
+          datosUsuario[DatabaseHelper.columnaUsuariosApellidos] as String,
+      telefono: datosUsuario[DatabaseHelper.columnaUsuariosTelefono] as String,
+      contrasena:
+          datosUsuario[DatabaseHelper.columnaUsuariosContrasena] as String,
+      fechaCreacion:
+          datosUsuario[DatabaseHelper.columnaUsuariosFechacreacion] as String,
+      rol: datosUsuario[DatabaseHelper.columnaUsuariosRol] as String,
+      puntos: datosUsuario[DatabaseHelper.columnaUsuariosPuntos] as int,
+    );
 
     //si los datos coinciden, abrimos ya la pantalla principal
     Navigator.pushReplacement(
@@ -110,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
       MaterialPageRoute(
         builder: (context) => PantallaPrincipal(
           preferenciasService: widget._preferenciasService,
+          databasehelper: widget._databasehelper,
           usuario: usuario,
         ),
       ),
@@ -141,10 +128,7 @@ class _LoginPageState extends State<LoginPage> {
 
             //mostramos mensaje error por si hay alguno
             if (mensajeError.isNotEmpty)
-              Text(
-                mensajeError,
-                style: TextStyle(color: colores[NombreColores.estadoError]),
-              ),
+              Text(mensajeError, style: TextStyle(color: colores[NombreColores.estadoError])),
 
             const SizedBox(height: 24),
 
@@ -158,10 +142,8 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RegistroPage(
-                      databasehelper: widget._databasehelper,
-                      preferenciasService: widget._preferenciasService,
-                    ),
+                    builder: (context) =>
+                        RegistroPage(databasehelper: widget._databasehelper, preferenciasService: widget._preferenciasService,),
                   ),
                 );
               },

@@ -3,9 +3,20 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class Databasehelper {
+class DatabaseHelper {
   /// La instancia unica de databasehelper
-  static Databasehelper? _databasehelper;
+  static DatabaseHelper? _databasehelper;
+
+  ///!! SI USAS ESTO SIN HABER CREADO ANTES LA CLASE DARA ERROR !!
+  static DatabaseHelper get instanciaDH {
+    final instancia = _databasehelper;
+    if (instancia == null) {
+      throw Exception(
+        'No has inicializado la clase databasehelper antes de hacer este get',
+      );
+    }
+    return instancia;
+  }
 
   /// La base de datos unica para uso interno.
   late final Database _baseDeDatos;
@@ -14,15 +25,16 @@ class Databasehelper {
   Database get baseDeDatos => _baseDeDatos;
 
   /// Constructor privado para evitar que se pueda llamar a new.
-  Databasehelper._crear();
+  DatabaseHelper._crear();
 
   /// Constructor publico singleton asegura que solo hay una instancia de esta clase.
-  static Future<Databasehelper> crear() async {
-    if (_databasehelper != null) {
-      return await Future.value(_databasehelper);
+  static FutureOr<DatabaseHelper> crear() async {
+    final DatabaseHelper? instancia = _databasehelper;
+    if (instancia != null) {
+      return instancia;
     }
 
-    final inicializando = Databasehelper._crear();
+    final inicializando = DatabaseHelper._crear();
 
     inicializando._baseDeDatos = await inicializando._getInstanciaBD;
 
@@ -136,7 +148,7 @@ class Databasehelper {
   }
 
   //creamos la funcion para insertar el usuario
- /* Future<int> insertarUsuario(
+  /* Future<int> insertarUsuario(
     String email,
     String nombre,
     String apellidos,
