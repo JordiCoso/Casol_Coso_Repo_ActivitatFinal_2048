@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 
 import '../models/cuadrado.dart';
-import '../models/tablero.dart' as Tablero;
+import '../models/tablero.dart';
 
-class TarjetaTablero extends StatefulWidget {
-  const TarjetaTablero({super.key});
+class BoardWidget extends StatefulWidget {
+  final int? tamanoTablero;
+  late final Tablero tablero;
+
+  BoardWidget({super.key, this.tamanoTablero}) {
+    tablero =
+    tamanoTablero == null ? Tablero() : Tablero(tamanoTablero: tamanoTablero!);
+  }
 
   @override
-  State<StatefulWidget> createState() => _TarjetaTableroState();
+  State<StatefulWidget> createState() => _BoardWidgetState();
 }
 
-class _TarjetaTableroState extends State<TarjetaTablero> {
+class _BoardWidgetState extends State<BoardWidget> {
   Color color = Color(0xFFFF0000);
 
   @override
@@ -78,7 +84,7 @@ class _TarjetaTableroState extends State<TarjetaTablero> {
 
   _ActualizarPosiciones() {
     Map<String, Cuadrado> tablero;
-    Map<String, Cuadrado> nuevoTablero = Tablero.tableroVacio;
+    Map<String, Cuadrado> nuevoTablero = widget.tableroVacio;
     tablero.forEach((posicion, cuadrado) {
       if (cuadrado.valor != 0) {
         nuevoTablero[posicion] = cuadrado;

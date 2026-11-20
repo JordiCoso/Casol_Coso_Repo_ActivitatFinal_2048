@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/tarjeta_tablero.dart';
+import '../widgets/boardwidget.dart';
 import '/models/colores.dart';
 import '/services/preferenciasservice.dart';
 
@@ -38,7 +38,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             SizedBox(height: 200),
-            TarjetaTablero(),
+            BoardWidget(),
           ],
         ),
       ),
