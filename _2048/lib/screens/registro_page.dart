@@ -6,37 +6,25 @@ import '../services/contrasena_service.dart';
 import '/services/preferenciasservice.dart';
 
 import '../models/colores.dart';
-import '../data/databasehelper.dart';
 import '/widgets/boton_principal.dart';
 
 import '/widgets/campo_texto_app.dart';
 
 class RegistroPage extends StatefulWidget {
-  final DatabaseHelper _databasehelper;
   final PreferenciasService _preferenciasService;
 
-  const RegistroPage({
-    super.key,
-    required this._databasehelper,
-    required this._preferenciasService,
-  });
+  const RegistroPage({super.key, required this._preferenciasService});
 
   @override
   State<RegistroPage> createState() => _RegistroPageState();
 }
 
 class _RegistroPageState extends State<RegistroPage> {
-  //utilizamos el dao para las consultas de usuarios
-  late final UsuarioDao _usuarioDao;
+  //utilizamos el dao para consultar los usuarios
+  final UsuarioDao _usuarioDao = UsuarioDao();
 
   //utilizamos el servicio para proteger las contraseñas
   final ContrasenaService _contrasenaService = ContrasenaService();
-
-  @override
-  void initState() {
-    super.initState();
-    _usuarioDao = UsuarioDao(widget._databasehelper);
-  }
 
   //creamos los controladores para tener los datos mientras se usa en el registro y recuperarlos cuando lo necesitemos.
   final TextEditingController usuarioController = TextEditingController();
