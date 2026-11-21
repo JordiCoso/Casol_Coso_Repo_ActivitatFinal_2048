@@ -1,11 +1,14 @@
-import 'package:_2048/routes.dart';
-import 'package:_2048/screens/splash_screen.dart';
+//import 'package:_2048/routes.dart';
+import 'package:_2048/screens/estadisticas_page.dart';
+import 'package:_2048/screens/historial_page.dart';
+import 'package:_2048/screens/ranking_page.dart';
+//import 'package:_2048/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'data/databasehelper.dart';
 import 'models/colores.dart';
-import 'models/usuario.dart';
+//import 'models/usuario.dart';
 import 'services/preferenciasservice.dart';
 
 Future<void> main() async {
@@ -52,10 +55,11 @@ class _MyAppState extends State<MyApp> {
         final Map<String, Color> colores = obtenerEsquemaColoresActual(
           widget._preferenciasService.obtenerTemaOscuro(),
         );
-
-        return MaterialApp.router(
+        
+        return MaterialApp(
+        //return MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          title: 'VaporBooking',
+          title: '2048',
 
           theme: ThemeData(
             scaffoldBackgroundColor: colores[NombreColores.fondo],
@@ -108,12 +112,13 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
 
+          home: RankingPage(preferenciasService: widget._preferenciasService),
           /*home: PantallaPrincipal(
             preferenciasService: widget._preferenciasService,
             databasehelper: widget._databasehelper,
             usuario: Usuario(nombre: 'aa', numeroHabitos: 2),
           ),*/
-          routerConfig: router,
+          //routerConfig: router,
 
 
         );

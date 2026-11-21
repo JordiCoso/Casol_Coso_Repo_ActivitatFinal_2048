@@ -76,7 +76,7 @@ class _TarjetaTableroState extends State<TarjetaTablero> {
     );
   }
 
-  _ActualizarPosiciones() {
+ /* _ActualizarPosiciones() {
     Map<String, Cuadrado> tablero;
     Map<String, Cuadrado> nuevoTablero = Tablero.tableroVacio;
     tablero.forEach((posicion, cuadrado) {
@@ -85,7 +85,7 @@ class _TarjetaTableroState extends State<TarjetaTablero> {
       }
     });
   }
-}
+}*/
 
 /* _DeslizarIzquierda() {
     // Lineas 0 -> 3
@@ -204,4 +204,5 @@ class _TarjetaTableroState extends State<TarjetaTablero> {
         }
       }
     }
-  }*/}
+  }*/
+}
