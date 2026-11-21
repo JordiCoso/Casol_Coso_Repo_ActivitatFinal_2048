@@ -2,19 +2,18 @@ import 'package:_2048/models/colores.dart';
 import 'package:_2048/models/iconos.dart';
 import 'package:_2048/services/preferenciasservice.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../data/partida_dao.dart';
 import '../models/partida.dart';
+import '../routes.dart';
 import '../widgets/async_data_view.dart';
 import '../widgets/confirm_dialog.dart';
 import '../widgets/empty_state_view.dart';
 import '../widgets/partida_list_item.dart';
-import 'detalles_partida_page.dart';
 
 class HistorialPage extends StatefulWidget {
-  final PreferenciasService _preferenciasService;
-
-  const HistorialPage({super.key, required this._preferenciasService});
+  const HistorialPage({super.key});
 
   @override
   State<HistorialPage> createState() => _HistorialPageState();
@@ -199,18 +198,10 @@ class _HistorialPageState extends State<HistorialPage> {
 
   //abrimos el detalle y comprobamos si se ha eliminado
   Future<void> _abrirDetalles(int idPartida) async {
-    final resultado = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DetallesPartidaPage(idPartida: idPartida),
-      ),
+    context.goNamed(
+      Rutas.detallePartida,
+      pathParameters: {Rutas.parametroDetallePartidaID: idPartida.toString()},
     );
-
-    if (!mounted) return;
-
-    if (resultado == true) {
-      _cargarPartidas();
-    }
   }
 
   //eliminamos la partida y actualizamos el historial
@@ -306,7 +297,7 @@ class _HistorialPageState extends State<HistorialPage> {
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      widget._preferenciasService.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
     );
 
     return Scaffold(

@@ -1,19 +1,18 @@
 import 'package:_2048/models/iconos.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../data/partida_dao.dart';
 import '../models/colores.dart';
 import '../models/partida.dart';
+import '../routes.dart';
 import '../services/preferenciasservice.dart';
 import '../widgets/async_data_view.dart';
 import '../widgets/empty_state_view.dart';
 import '../widgets/partida_list_item.dart';
-import 'detalles_partida_page.dart';
 
 class RankingPage extends StatefulWidget {
-  final PreferenciasService _preferenciasService;
-
-  const RankingPage({super.key, required this._preferenciasService});
+  const RankingPage({super.key});
 
   @override
   State<RankingPage> createState() => _RankingPageState();
@@ -60,24 +59,16 @@ class _RankingPageState extends State<RankingPage> {
 
   //abrimos los detalles de la partida seleccionada
   Future<void> _abrirDetalles(int idPartida) async {
-    final resultado = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DetallesPartidaPage(idPartida: idPartida),
-      ),
+    context.goNamed(
+      Rutas.detallePartida,
+      pathParameters: {Rutas.parametroDetallePartidaID: idPartida.toString()},
     );
-
-    if (!mounted) return;
-
-    if (resultado == true) {
-      _cargarRanking();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      widget._preferenciasService.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
     );
 
     return Scaffold(

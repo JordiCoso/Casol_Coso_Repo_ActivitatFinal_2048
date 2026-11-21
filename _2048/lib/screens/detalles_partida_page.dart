@@ -1,14 +1,16 @@
 import 'package:_2048/models/iconos.dart';
 import 'package:_2048/widgets/async_data_view.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../data/partida_dao.dart';
 import '../models/partida.dart';
+import '../routes.dart';
 import '../widgets/confirm_dialog.dart';
 import '../widgets/stat_card.dart';
 
 class DetallesPartidaPage extends StatefulWidget {
-  final int idPartida;
+  final String idPartida;
 
   const DetallesPartidaPage({super.key, required this.idPartida});
 
@@ -37,16 +39,17 @@ class _DetallesPartidaPageState extends State<DetallesPartidaPage> {
     });
 
     try {
-    final resultado = await _partidaDao.obtenerPartidaPorId(widget.idPartida);
+      final id = int.parse(widget.idPartida);
+      final resultado = await _partidaDao.obtenerPartidaPorId(id);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    setState(() {
-      _partida = resultado;
-      _cargando = false;
-    });
-  } catch(e) {
-      if(!mounted) return;
+      setState(() {
+        _partida = resultado;
+        _cargando = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
 
       setState(() {
         _cargando = false;
@@ -57,11 +60,12 @@ class _DetallesPartidaPageState extends State<DetallesPartidaPage> {
 
   //eliminamos la partida seleccionada
   Future<void> _eliminarPartida() async {
-    await _partidaDao.eliminarPartida(widget.idPartida);
+    final id = int.parse(widget.idPartida);
+    await _partidaDao.eliminarPartida(id);
 
     if (!mounted) return;
 
-    Navigator.pop(context, true);
+    context.goNamed(Rutas.historial);
   }
 
   //confirmacion
@@ -99,7 +103,7 @@ class _DetallesPartidaPageState extends State<DetallesPartidaPage> {
                 onReintentar: _cargarPartida,
               ),
 
-              if(!_cargando && !_error && _partida == null)
+              if (!_cargando && !_error && _partida == null)
                 const Text('No se ha encontrado la partida'),
 
               if (!_cargando && _partida != null)
