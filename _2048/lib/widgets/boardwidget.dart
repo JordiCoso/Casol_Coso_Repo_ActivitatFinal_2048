@@ -82,7 +82,7 @@ class _BoardWidgetState extends State<BoardWidget> {
     );
   }
 
-  _ActualizarPosiciones() {
+ /* _ActualizarPosiciones() {
     Map<String, Cuadrado> tablero;
     Map<String, Cuadrado> nuevoTablero = widget.tableroVacio;
     tablero.forEach((posicion, cuadrado) {
@@ -91,7 +91,7 @@ class _BoardWidgetState extends State<BoardWidget> {
       }
     });
   }
-}
+}*/
 
 /* _DeslizarIzquierda() {
     // Lineas 0 -> 3
@@ -210,4 +210,5 @@ class _BoardWidgetState extends State<BoardWidget> {
         }
       }
     }
-  }*/}
+  }*/
+}

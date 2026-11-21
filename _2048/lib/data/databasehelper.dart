@@ -118,7 +118,7 @@ class DatabaseHelper {
     packDeInstrucciones.execute(
       'CREATE TABLE $tablaUsuarios ('
       '$columnaUsuariosId INTEGER PRIMARY KEY AUTOINCREMENT, '
-      '$columnaUsuariosUsuario TEXT NOT NULL, '
+      '$columnaUsuariosUsuario TEXT NOT NULL UNIQUE, '
       '$columnaUsuariosFecharegistro TEXT NOT NULL,'
       '$columnaUsuariosEmail TEXT NOT NULL, '
       '$columnaUsuariosContrasena TEXT NOT NULL) ',

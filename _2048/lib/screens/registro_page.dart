@@ -1,47 +1,44 @@
 import 'package:flutter/material.dart';
 
+import '../data/usuario_dao.dart';
+import '../models/usuario.dart';
+import '../services/contrasena_service.dart';
 import '/services/preferenciasservice.dart';
 
 import '../models/colores.dart';
-import '../data/databasehelper.dart';
 import '/widgets/boton_principal.dart';
-
-import 'package:intl/intl.dart';
 
 import '/widgets/campo_texto_app.dart';
 
 class RegistroPage extends StatefulWidget {
-  final DatabaseHelper _databasehelper;
   final PreferenciasService _preferenciasService;
 
-  const RegistroPage({
-    super.key,
-    required this._databasehelper,
-    required this._preferenciasService,
-  });
+  const RegistroPage({super.key, required this._preferenciasService});
 
   @override
   State<RegistroPage> createState() => _RegistroPageState();
 }
 
 class _RegistroPageState extends State<RegistroPage> {
+  //utilizamos el dao para consultar los usuarios
+  final UsuarioDao _usuarioDao = UsuarioDao();
+
+  //utilizamos el servicio para proteger las contraseñas
+  final ContrasenaService _contrasenaService = ContrasenaService();
+
   //creamos los controladores para tener los datos mientras se usa en el registro y recuperarlos cuando lo necesitemos.
-  final TextEditingController nombreController = TextEditingController();
-  final TextEditingController apellidoController = TextEditingController();
+  final TextEditingController usuarioController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController contrasenaController = TextEditingController();
-  final TextEditingController telefonoController = TextEditingController();
 
   String mensajeError = '';
 
   @override
   //cuando se quite la pantalla, debemos usar el dispose para librerar la informacion.
   void dispose() {
-    nombreController.dispose();
-    apellidoController.dispose();
+    usuarioController.dispose();
     emailController.dispose();
     contrasenaController.dispose();
-    telefonoController.dispose();
 
     super.dispose();
   }
@@ -49,16 +46,23 @@ class _RegistroPageState extends State<RegistroPage> {
   //comprobamos que no esté vacío, para todos los campos con el controller.
   //Usamos el setState para mostrar el mensaje de error si el campo queda vacío.
   Future<void> registrarUsuario() async {
-    if (nombreController.text.trim().isEmpty) {
+    if (usuarioController.text.trim().isEmpty) {
       setState(() {
-        mensajeError = 'El nombre no puede estar vacío';
+        mensajeError = 'El usuario no puede estar vacío';
       });
       return;
     }
 
-    if (apellidoController.text.trim().isEmpty) {
+    //comprobamos si el nombre de usuario ya está registrado
+    final bool usuarioExiste = await _usuarioDao.existeUsuario(
+      usuarioController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    if (usuarioExiste) {
       setState(() {
-        mensajeError = 'El apellido no puede estar vacío';
+        mensajeError = 'Este nombre de usuario ya está registrado';
       });
       return;
     }
@@ -79,14 +83,6 @@ class _RegistroPageState extends State<RegistroPage> {
       return;
     }
 
-    //comprobamos que el telefono no este vacio
-    if (telefonoController.text.trim().isEmpty) {
-      setState(() {
-        mensajeError = 'El teléfono no puede estar vacío';
-      });
-      return;
-    }
-
     if (contrasenaController.text.trim().isEmpty) {
       setState(() {
         mensajeError = 'La contraseña no puede estar vacía';
@@ -94,10 +90,8 @@ class _RegistroPageState extends State<RegistroPage> {
       return;
     }
 
-    //antes de registrar al uusario, comprobamos en sqflite q no exista otro con el mismo correo
-    final bool emailExiste = await widget._databasehelper.existeEmail(
-      emailController.text.trim(),
-    );
+    //comprobamos si el email ya existe en la bbdd
+    final bool emailExiste = await _usuarioDao.existeEmail(email);
 
     if (!mounted) return;
 
@@ -113,28 +107,27 @@ class _RegistroPageState extends State<RegistroPage> {
       mensajeError = '';
     });
 
-    //obtenemos la fecha de creacion al registrar el usuario
-    final String fechaCreacion = DateFormat('dd-MM-yyyy')
-        .format(DateTime.now());
+    //obtenemos la fecha del registro en formato iso 8601
+    final String fechaRegistro = DateTime.now().toIso8601String();
 
-    //todos los nuevos usuarios tendran el rol de usuario. así no pueden escoger su rol
-    final String rol = 'usuario';
-
-    //le pasamos los datos para poner en el usuario
-    await widget._databasehelper.insertarUsuario(
-      emailController.text.trim(),
-      nombreController.text.trim(),
-      apellidoController.text.trim(),
-      telefonoController.text.trim(),
-      contrasenaController.text.trim(),
-      fechaCreacion,
-      rol,
+    //generamos el hash de la contraseña
+    final String hash = await _contrasenaService.generarHash(
+      contrasenaController.text,
     );
 
-    //comprobamos que el correo se haya guardado correctamente
-    bool usuarioGuardado = await widget._databasehelper.existeEmail(
-      emailController.text.trim(),
+    //creamos el usuario con los datos del formulario
+    final Usuario nuevoUsuario = Usuario(
+      usuario: usuarioController.text.trim(),
+      email: email,
+      contrasena: hash,
+      fechaRegistro: fechaRegistro,
     );
+
+    //guardamos el usuario en la bbdd
+    await _usuarioDao.insertarUsuario(nuevoUsuario);
+
+    //comprobamos que el usuario se haya guardado correctamente
+    bool usuarioGuardado = await _usuarioDao.existeEmail(email);
 
     print('Usuario guardado: $usuarioGuardado');
 
@@ -153,19 +146,11 @@ class _RegistroPageState extends State<RegistroPage> {
         padding: EdgeInsets.all(24),
         child: Column(
           children: [
-            CampoTextoApp(etiqueta: 'Nombre', controller: nombreController),
-
-            const SizedBox(height: 16),
-
-            CampoTextoApp(etiqueta: 'Apellido', controller: apellidoController),
+            CampoTextoApp(etiqueta: 'Usuario', controller: usuarioController),
 
             const SizedBox(height: 16),
 
             CampoTextoApp(etiqueta: 'Email', controller: emailController),
-
-            const SizedBox(height: 16),
-
-            CampoTextoApp(etiqueta: 'Teléfono', controller: telefonoController),
 
             const SizedBox(height: 16),
 

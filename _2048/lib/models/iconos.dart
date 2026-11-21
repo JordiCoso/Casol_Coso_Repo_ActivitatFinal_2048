@@ -4,38 +4,36 @@ class NombreIconos {
   const NombreIconos._nollamar();
 
   static const String inicio = 'Inicio';
-  static const String personal = 'Personal';
-  static const String clientes = 'Clientes';
-  static const String servicios = 'Servicios';
-  static const String cobros = 'Cobros';
-  static const String cartera = 'Cartera';
   static const String flechaPequenaDerecha = 'Flecha';
-  static const String iconoMasaje = 'Icono masaje';
-  static const String iconoEstetica = 'Icono estética';
-  static const String iconoSolarium = 'Icono solárium';
   static const String reloj = 'Reloj';
   static const String check = 'Check';
-  static const String realizado = 'Check redondo';
-  static const String pendiente = 'Pendiente';
-  static const String rechazado = 'Rechazado';
   static const String ajustes = 'Ajustes';
+  static const String puntuacionObtenida = 'Puntuación obtenida';
+  static const String fichaMaxima = 'Ficha máxima';
+  static const String movimientos = 'Movimientos';
+  static const String duracion = 'Duración';
+  static const String totalPartidas = 'Total partidas';
+  static const String puntuacionMedia = 'Puntuación media';
+  static const String ranking = 'Ranking';
+  static const String primerPuesto = 'Primer puesto';
+  static const String sinPartidas = 'Sin partidas';
+  static const String estadisticas = 'Estadísticas';
 }
 
 const Map<String, IconData> listaIconos = {
   NombreIconos.inicio: Icons.cottage_outlined,
-  NombreIconos.personal: Icons.person_outline,
-  NombreIconos.clientes: Icons.badge_outlined,
-  NombreIconos.servicios: Icons.bathtub_outlined,
-  NombreIconos.cobros: Icons.credit_card_outlined,
-  NombreIconos.cartera: Icons.account_balance_wallet_outlined,
   NombreIconos.flechaPequenaDerecha: Icons.chevron_right,
-  NombreIconos.iconoMasaje: Icons.airline_seat_flat,
-  NombreIconos.iconoEstetica: Icons.face_outlined,
-  NombreIconos.iconoSolarium: Icons.light_mode_outlined,
   NombreIconos.reloj: Icons.schedule_outlined,
   NombreIconos.check: Icons.check,
-  NombreIconos.realizado: Icons.check_circle_outline,
-  NombreIconos.pendiente: Icons.error_outline,
-  NombreIconos.rechazado: Icons.close,
   NombreIconos.ajustes: Icons.settings_outlined,
+  NombreIconos.puntuacionObtenida: Icons.star_outline,
+  NombreIconos.fichaMaxima: Icons.grid_view_outlined,
+  NombreIconos.movimientos: Icons.swipe_outlined,
+  NombreIconos.duracion: Icons.timer_outlined,
+  NombreIconos.totalPartidas: Icons.sports_esports_outlined,
+  NombreIconos.puntuacionMedia: Icons.bar_chart_outlined,
+  NombreIconos.ranking: Icons.emoji_events_outlined,
+  NombreIconos.primerPuesto: Icons.military_tech_outlined,
+  NombreIconos.sinPartidas: Icons.search_off_outlined,
+  NombreIconos.estadisticas: Icons.scoreboard_outlined,
 };
