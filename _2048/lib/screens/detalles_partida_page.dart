@@ -24,6 +24,7 @@ class _DetallesPartidaPageState extends State<DetallesPartidaPage> {
   Partida? _partida;
   bool _cargando = true;
   bool _error = false;
+  bool _eliminando = false;
 
   @override
   void initState() {
@@ -60,12 +61,40 @@ class _DetallesPartidaPageState extends State<DetallesPartidaPage> {
 
   //eliminamos la partida seleccionada
   Future<void> _eliminarPartida() async {
-    final id = int.parse(widget.idPartida);
-    await _partidaDao.eliminarPartida(id);
+    setState(() {
+      _eliminando = true;
+    });
 
-    if (!mounted) return;
+    try {
+      final id = int.parse(widget.idPartida);
+      await _partidaDao.eliminarPartida(id);
 
-    context.goNamed(Rutas.historial);
+      if (!mounted) return;
+
+      context.goNamed(Rutas.historial);
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _eliminando = false;
+      });
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error al eliminar'),
+          content: const Text('No se ha podido eliminar la partida'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Aceptar'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   //confirmacion
@@ -106,7 +135,7 @@ class _DetallesPartidaPageState extends State<DetallesPartidaPage> {
               if (!_cargando && !_error && _partida == null)
                 const Text('No se ha encontrado la partida'),
 
-              if (!_cargando && _partida != null)
+              if (!_cargando && !_error && _partida != null)
                 Column(
                   children: [
                     Text(
@@ -150,8 +179,10 @@ class _DetallesPartidaPageState extends State<DetallesPartidaPage> {
                     const SizedBox(height: 24),
 
                     ElevatedButton(
-                      onPressed: _confirmarEliminacion,
-                      child: const Text('Eliminar partida'),
+                      onPressed: _eliminando ? null : _confirmarEliminacion,
+                      child: Text(
+                        _eliminando ? 'Eliminando...' : 'Eliminar partida',
+                      ),
                     ),
                   ],
                 ),

@@ -74,7 +74,7 @@ class _HistorialPageState extends State<HistorialPage> {
     }
 
     setState(() {
-      _ultimoFiltro = 'todos';
+      _ultimoFiltro = 'usuario';
       _cargando = true;
       _error = false;
     });
@@ -116,7 +116,7 @@ class _HistorialPageState extends State<HistorialPage> {
     }
 
     setState(() {
-      _ultimoFiltro = 'todos';
+      _ultimoFiltro = 'ficha';
       _cargando = true;
       _error = false;
     });
@@ -156,7 +156,7 @@ class _HistorialPageState extends State<HistorialPage> {
     }
 
     setState(() {
-      _ultimoFiltro = 'todos';
+      _ultimoFiltro = 'ambos';
       _cargando = true;
       _error = false;
     });
@@ -206,11 +206,29 @@ class _HistorialPageState extends State<HistorialPage> {
 
   //eliminamos la partida y actualizamos el historial
   Future<void> _eliminarPartida(int idPartida) async {
-    await _partidaDao.eliminarPartida(idPartida);
+    try {
+      await _partidaDao.eliminarPartida(idPartida);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    _cargarPartidas();
+      _reintentar();
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error al eliminar'),
+          content: Text('No se ha podido eliminar la partida'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Aceptar'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   //confirmacion
@@ -399,16 +417,49 @@ class _HistorialPageState extends State<HistorialPage> {
                           ),
 
                           confirmDismiss: (direction) async {
-                            return await _confirmarDeslizamiento();
-                          },
+                            final confirmar = await _confirmarDeslizamiento();
 
-                          onDismissed: (direction) {
-                            if (partida.id != null) {
+                            if (!confirmar) {
+                              return false;
+                            }
+
+                            if (partida.id == null) {
+                              return false;
+                            }
+
+                            try {
+                              await _partidaDao.eliminarPartida(partida.id!);
+
+                              if (!mounted) return false;
+
                               setState(() {
                                 _partidas.remove(partida);
                               });
 
-                              _eliminarPartida(partida.id!);
+                              _reintentar();
+                              return false;
+                            } catch (e) {
+                              if (!mounted) return false;
+
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Error al eliminar'),
+                                  content: Text(
+                                    'No se ha podido eliminar la partida.',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Aceptar'),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              return false;
                             }
                           },
 

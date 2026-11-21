@@ -18,6 +18,8 @@ class NombreIconos {
   static const String primerPuesto = 'Primer puesto';
   static const String sinPartidas = 'Sin partidas';
   static const String estadisticas = 'Estadísticas';
+  static const String paleta = 'Paleta';
+  static const String papelera = 'Papelera';
 }
 
 const Map<String, IconData> listaIconos = {
@@ -36,4 +38,6 @@ const Map<String, IconData> listaIconos = {
   NombreIconos.primerPuesto: Icons.military_tech_outlined,
   NombreIconos.sinPartidas: Icons.search_off_outlined,
   NombreIconos.estadisticas: Icons.scoreboard_outlined,
+  NombreIconos.paleta: Icons.palette_outlined,
+  NombreIconos.papelera: Icons.delete_outline_outlined,
 };
