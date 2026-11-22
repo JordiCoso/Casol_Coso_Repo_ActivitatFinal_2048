@@ -19,7 +19,8 @@ class BotonPrincipal extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: colores[NombreColores.principal],
-        padding: EdgeInsets.symmetric(horizontal: 80, vertical: 13),
+        fixedSize: Size(300, 50),
+        padding: EdgeInsets.all(0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       onPressed: pulsar,
