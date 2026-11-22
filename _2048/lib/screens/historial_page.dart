@@ -82,7 +82,21 @@ class _HistorialPageState extends State<HistorialPage> {
     });
 
     try {
-      final resultado = await _partidaDao.obtenerPartidasUsuario(nombreUsuario);
+      //buscamos el usuario mediante su nombre
+      final usuario = await _usuarioDao.obtenerUsuarioPorNombre(nombreUsuario);
+
+      if (usuario == null) {
+        if (!mounted) return;
+
+        setState(() {
+          _partidas = [];
+          _cargando = false;
+        });
+
+        return;
+      }
+
+      final resultado = await _partidaDao.obtenerPartidasUsuario(usuario.id!);
 
       if (!mounted) return;
 
@@ -182,6 +196,12 @@ class _HistorialPageState extends State<HistorialPage> {
         usuario.id!,
         fichaMaxima,
       );
+      if (!mounted) return;
+
+      setState(() {
+        _partidas = resultado;
+        _cargando = false;
+      });
     } catch (e) {
       if (!mounted) return;
 
@@ -330,7 +350,16 @@ class _HistorialPageState extends State<HistorialPage> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Historial')),
+      appBar: AppBar(
+        title: Text(
+          'Historial',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: colores[NombreColores.textoPrincipal],
+          ),
+        ),
+      ),
       body: RefreshIndicator(
         color: colores[NombreColores.principal],
         backgroundColor: colores[NombreColores.superficie],
@@ -342,17 +371,48 @@ class _HistorialPageState extends State<HistorialPage> {
               children: [
                 TextField(
                   controller: _usuarioController,
+                  style: TextStyle(
+                    color: colores[NombreColores.textoPrincipal],
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Buscar por usuario',
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(
+                      color: colores[NombreColores.textoSecundario],
+                    ),
+                    filled: true,
+                    fillColor: colores[NombreColores.superficie],
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: colores[NombreColores.bordes]!,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: colores[NombreColores.principal]!,
+                        width: 2,
+                      ),
+                    ),
                   ),
                 ),
 
                 SizedBox(height: 12),
 
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colores[NombreColores.principal],
+                    fixedSize: Size(300, 50),
+                    padding: EdgeInsets.all(0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: _filtrarPorUsuario,
-                  child: Text('Buscar'),
+                  child: Text(
+                    'Buscar',
+                    style: TextStyle(color: colores[NombreColores.fondo]),
+                  ),
                 ),
 
                 SizedBox(height: 12),
@@ -360,31 +420,84 @@ class _HistorialPageState extends State<HistorialPage> {
                 TextField(
                   controller: _fichaController,
                   keyboardType: TextInputType.number,
+                  style: TextStyle(
+                    color: colores[NombreColores.textoPrincipal],
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Buscar por ficha',
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(
+                      color: colores[NombreColores.textoSecundario],
+                    ),
+                    filled: true,
+                    fillColor: colores[NombreColores.superficie],
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: colores[NombreColores.bordes]!,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: colores[NombreColores.principal]!,
+                        width: 2,
+                      ),
+                    ),
                   ),
                 ),
 
                 SizedBox(height: 12),
 
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colores[NombreColores.principal],
+                    fixedSize: Size(300, 50),
+                    padding: EdgeInsets.all(0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: _filtrarPorFicha,
-                  child: Text('Filtrar por ficha'),
+                  child: Text(
+                    'Filtrar por ficha',
+                    style: TextStyle(color: colores[NombreColores.fondo]),
+                  ),
                 ),
 
                 SizedBox(height: 12),
 
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colores[NombreColores.principal],
+                    fixedSize: Size(300, 50),
+                    padding: EdgeInsets.all(0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: _filtrarAmbos,
-                  child: Text('Aplicar ambos filtros'),
+                  child: Text(
+                    'Aplicar ambos filtros',
+                    style: TextStyle(color: colores[NombreColores.fondo]),
+                  ),
                 ),
 
                 SizedBox(height: 24),
 
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colores[NombreColores.principal],
+                    fixedSize: Size(300, 50),
+                    padding: EdgeInsets.all(0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: _cargarPartidas,
-                  child: Text('Actualizar historial'),
+                  child: Text(
+                    'Actualizar historial',
+                    style: TextStyle(color: colores[NombreColores.fondo]),
+                  ),
                 ),
 
                 SizedBox(height: 24),
@@ -405,7 +518,12 @@ class _HistorialPageState extends State<HistorialPage> {
                 if (!_cargando && !_error && _partidas.isNotEmpty)
                   Column(
                     children: [
-                      Text('Total de partidas: ${_partidas.length}'),
+                      Text(
+                        'Total de partidas: ${_partidas.length}',
+                        style: TextStyle(
+                          color: colores[NombreColores.textoPrincipal],
+                        ),
+                      ),
 
                       const SizedBox(height: 16),
 

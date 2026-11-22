@@ -80,7 +80,14 @@ class _RankingPageState extends State<RankingPage> {
               color: colores[NombreColores.principal],
             ),
             const SizedBox(width: 8),
-            const Text('Ranking'),
+            Text(
+              'Ranking',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: colores[NombreColores.textoPrincipal],
+              ),
+            ),
           ],
         ),
       ),
@@ -94,9 +101,9 @@ class _RankingPageState extends State<RankingPage> {
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              const Text(
+              Text(
                 'Las 10 mejores partidas',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colores[NombreColores.textoPrincipal]),
               ),
 
               AsyncDataView(

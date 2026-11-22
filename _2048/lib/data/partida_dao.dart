@@ -23,11 +23,11 @@ class PartidaDao {
   }
 
   //pillamos las partidas terminadas de un usuario
-  Future<List<Partida>> obtenerPartidasUsuario(String nombreUsuario) async {
+  Future<List<Partida>> obtenerPartidasUsuario(int usuarioId) async {
     final resultado = await _db.query(
       DatabaseHelper.tablaPartidas,
       where: '${DatabaseHelper.columnaPartidasUsuarioId} = ?',
-      whereArgs: [nombreUsuario],
+      whereArgs: [usuarioId],
       orderBy: '${DatabaseHelper.columnaPartidasFecha} DESC',
     );
 

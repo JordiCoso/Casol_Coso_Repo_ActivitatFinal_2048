@@ -109,7 +109,11 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
       appBar: AppBar(
         title: Text(
           'Ajustes',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: colores[NombreColores.textoPrincipal],
+          ),
         ),
       ),
 
@@ -200,6 +204,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: colores[NombreColores.textoPrincipal],
                         ),
                       ),
                     ],

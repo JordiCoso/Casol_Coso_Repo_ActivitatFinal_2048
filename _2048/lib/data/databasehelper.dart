@@ -143,7 +143,7 @@ class DatabaseHelper {
       //normalizacion y comprobacion para q no hayan numeros negativos
       'CREATE TABLE $tablaGuardado ('
       '$columnaGuardadoId INTEGER PRIMARY KEY CHECK ($columnaGuardadoId = 1),'
-      '$columnaGuardadoUsuarioId INTEGER NOT NULL. '
+      '$columnaGuardadoUsuarioId INTEGER NOT NULL, '
       '$columnaGuardadoTablero  TEXT NOT NULL, '
       '$columnaGuardadoPuntuacion  INTEGER NOT NULL CHECK ($columnaGuardadoPuntuacion >= 0), '
       '$columnaGuardadoMovimientos  INTEGER NOT NULL CHECK ($columnaGuardadoMovimientos >= 0), '
