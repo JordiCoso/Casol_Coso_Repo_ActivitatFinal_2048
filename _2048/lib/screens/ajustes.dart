@@ -106,7 +106,12 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
       PreferenciasService.instanciaPS.obtenerTemaOscuro(),
     );
     return Scaffold(
-      appBar: AppBar(title: Text('Ajustes')),
+      appBar: AppBar(
+        title: Text(
+          'Ajustes',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ),
 
       body: SingleChildScrollView(
         padding: EdgeInsets.all(24),
