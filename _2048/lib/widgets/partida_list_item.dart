@@ -5,13 +5,13 @@ import '../models/partida.dart';
 class PartidaListItem extends StatelessWidget {
   final Partida partida;
   final VoidCallback onPulsar;
-  final VoidCallback onPulsacionLarga;
+  final VoidCallback? onPulsacionLarga;
 
   const PartidaListItem({
     super.key,
     required this.partida,
     required this.onPulsar,
-    required this.onPulsacionLarga,
+    this.onPulsacionLarga,
   });
 
   @override

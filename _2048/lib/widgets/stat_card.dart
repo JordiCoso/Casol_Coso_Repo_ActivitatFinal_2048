@@ -23,11 +23,19 @@ class StatCard extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          Text(titulo, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            titulo,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
 
           const SizedBox(height: 8),
 
-          Text(valor, style: const TextStyle(fontSize: 24)),
+          Text(
+            valor,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 24),
+          ),
         ],
       ),
     );

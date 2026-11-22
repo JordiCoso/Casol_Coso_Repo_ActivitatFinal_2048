@@ -8,14 +8,12 @@ import '../models/usuario.dart';
 import '../data/databasehelper.dart';
 
 class PantallaPrincipal extends StatefulWidget {
-  final PreferenciasService _preferenciasService;
 
   // final Databasehelper _databasehelper;
   final Usuario _usuario;
 
   const PantallaPrincipal({
     super.key,
-    required this._preferenciasService,
     // required this._databasehelper,
     required this._usuario,
   });

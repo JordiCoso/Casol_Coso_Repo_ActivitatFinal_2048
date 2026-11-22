@@ -12,14 +12,12 @@ import '/widgets/boton_principal.dart';
 import '../widgets/boton_esquina.dart';
 
 class SplashScreen extends StatelessWidget {
-  final PreferenciasService _preferenciasService;
-
-  const SplashScreen({super.key, required this._preferenciasService});
+  const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      _preferenciasService.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
     );
 
     return Scaffold(
@@ -103,7 +101,7 @@ class SplashScreen extends StatelessWidget {
 
                     if (modo == null) return;
 
-                    _preferenciasService.guardarTemaOscuro(modo);
+                    PreferenciasService.instanciaPS.guardarTemaOscuro(modo);
                   },
                 ),
               ],
@@ -114,12 +112,14 @@ class SplashScreen extends StatelessWidget {
               height: 150,
               width: 150,
             ),
-            Text('VaporBooking', style: Theme.of(context).textTheme.titleLarge),
+            Text('2048', style: Theme.of(context).textTheme.titleLarge),
             const Expanded(flex: 2, child: SizedBox()),
             BotonPrincipal(
               texto: 'Comenzar',
-              pulsar: () =>
-                  context.goNamed(Rutas.principal, extra: _preferenciasService),
+              pulsar: () => context.goNamed(
+                Rutas.principal,
+                extra: PreferenciasService.instanciaPS,
+              ),
             ),
             const Expanded(flex: 2, child: SizedBox()),
           ],

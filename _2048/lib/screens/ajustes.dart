@@ -3,7 +3,6 @@ import 'package:_2048/models/colores.dart';
 import 'package:_2048/models/iconos.dart';
 import 'package:_2048/services/preferenciasservice.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 
 import '../widgets/confirm_dialog.dart';
 
@@ -19,15 +18,10 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
 
   bool _eliminando = false;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  void _cambiarTemaOscuro(bool nuevoTema) {
+    PreferenciasService.instanciaPS.guardarTemaOscuro(nuevoTema);
 
-  void _cambiarTemaOscuro(bool colores) {
-    final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
-    );
+    setState(() {});
   }
 
   void _confirmarBorrarHistorial() {
@@ -108,6 +102,9 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
 
   @override
   Widget build(BuildContext context) {
+    final colores = obtenerEsquemaColoresActual(
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+    );
     return Scaffold(
       appBar: AppBar(title: Text('Ajustes')),
 
@@ -127,7 +124,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
+                color: colores[NombreColores.superficie],
                 borderRadius: BorderRadius.circular(16),
               ),
 
@@ -137,7 +134,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
                     children: [
                       Icon(
                         listaIconos[NombreIconos.paleta],
-                        color: Theme.of(context).colorScheme.primary,
+                        color: colores[NombreColores.principal],
                       ),
 
                       SizedBox(width: 8),
@@ -177,7 +174,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
+                color: colores[NombreColores.superficie],
                 borderRadius: BorderRadius.circular(16),
               ),
 
@@ -188,7 +185,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
                     children: [
                       Icon(
                         listaIconos[NombreIconos.papelera],
-                        color: Theme.of(context).colorScheme.error,
+                        color: colores[NombreColores.estadoError],
                       ),
 
                       SizedBox(width: 8),

@@ -120,7 +120,7 @@ class DatabaseHelper {
       '$columnaUsuariosId INTEGER PRIMARY KEY AUTOINCREMENT, '
       '$columnaUsuariosUsuario TEXT NOT NULL UNIQUE, '
       '$columnaUsuariosFecharegistro TEXT NOT NULL,'
-      '$columnaUsuariosEmail TEXT NOT NULL, '
+      '$columnaUsuariosEmail TEXT NOT NULL UNIQUE, '
       '$columnaUsuariosContrasena TEXT NOT NULL) ',
     );
 

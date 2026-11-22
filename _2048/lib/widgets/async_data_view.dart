@@ -36,6 +36,6 @@ class AsyncDataView extends StatelessWidget {
       );
     }
 
-    return const Center(child: Text(''));
+    return const SizedBox();
   }
 }

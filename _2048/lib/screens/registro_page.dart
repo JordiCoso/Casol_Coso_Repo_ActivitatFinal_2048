@@ -1,4 +1,6 @@
+import 'package:_2048/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../data/usuario_dao.dart';
 import '../models/usuario.dart';
@@ -11,9 +13,7 @@ import '/widgets/boton_principal.dart';
 import '/widgets/campo_texto_app.dart';
 
 class RegistroPage extends StatefulWidget {
-  final PreferenciasService _preferenciasService;
-
-  const RegistroPage({super.key, required this._preferenciasService});
+  const RegistroPage({super.key});
 
   @override
   State<RegistroPage> createState() => _RegistroPageState();
@@ -32,6 +32,7 @@ class _RegistroPageState extends State<RegistroPage> {
   final TextEditingController contrasenaController = TextEditingController();
 
   String mensajeError = '';
+  bool registrando = false;
 
   @override
   //cuando se quite la pantalla, debemos usar el dispose para librerar la informacion.
@@ -46,99 +47,113 @@ class _RegistroPageState extends State<RegistroPage> {
   //comprobamos que no esté vacío, para todos los campos con el controller.
   //Usamos el setState para mostrar el mensaje de error si el campo queda vacío.
   Future<void> registrarUsuario() async {
-    if (usuarioController.text.trim().isEmpty) {
+    if (registrando) return;
+
+    final String nombreUsuario = usuarioController.text.trim();
+    final String email = emailController.text.trim();
+    final String contrasena = contrasenaController.text;
+
+    if (nombreUsuario.isEmpty) {
       setState(() {
         mensajeError = 'El usuario no puede estar vacío';
       });
       return;
     }
 
-    //comprobamos si el nombre de usuario ya está registrado
-    final bool usuarioExiste = await _usuarioDao.existeUsuario(
-      usuarioController.text.trim(),
-    );
-
-    if (!mounted) return;
-
-    if (usuarioExiste) {
-      setState(() {
-        mensajeError = 'Este nombre de usuario ya está registrado';
-      });
-      return;
-    }
-
-    if (emailController.text.trim().isEmpty) {
+    if (email.isEmpty) {
       setState(() {
         mensajeError = 'El email no puede estar vacío';
       });
       return;
     }
 
-    //comprobamos que el correo tenga @ para que sea válido.
-    final String email = emailController.text.trim();
-    if (!email.contains('@')) {
+    //comprobacion del correo
+    if (!email.contains('@') || !email.contains('.')) {
       setState(() {
         mensajeError = 'El email no es válido';
       });
       return;
     }
 
-    if (contrasenaController.text.trim().isEmpty) {
+    if (contrasena.trim().isEmpty) {
       setState(() {
         mensajeError = 'La contraseña no puede estar vacía';
       });
       return;
     }
 
-    //comprobamos si el email ya existe en la bbdd
-    final bool emailExiste = await _usuarioDao.existeEmail(email);
-
-    if (!mounted) return;
-
-    if (emailExiste) {
-      setState(() {
-        mensajeError = 'Este correo ya existe';
-      });
-      return;
-    }
-
-    //con este setState, si todos los campos son válidos, no saldrá nada.
     setState(() {
       mensajeError = '';
+      registrando = true;
     });
 
-    //obtenemos la fecha del registro en formato iso 8601
-    final String fechaRegistro = DateTime.now().toIso8601String();
+    try {
+      final bool usuarioExiste = await _usuarioDao.existeUsuario(nombreUsuario);
 
-    //generamos el hash de la contraseña
-    final String hash = await _contrasenaService.generarHash(
-      contrasenaController.text,
-    );
+      if (!mounted) return;
 
-    //creamos el usuario con los datos del formulario
-    final Usuario nuevoUsuario = Usuario(
-      usuario: usuarioController.text.trim(),
-      email: email,
-      contrasena: hash,
-      fechaRegistro: fechaRegistro,
-    );
+      if (usuarioExiste) {
+        setState(() {
+          mensajeError = 'Este nombre de usuario ya está registrado';
+          registrando = false;
+        });
+        return;
+      }
 
-    //guardamos el usuario en la bbdd
-    await _usuarioDao.insertarUsuario(nuevoUsuario);
+      final bool emailExiste = await _usuarioDao.existeEmail(email);
 
-    //comprobamos que el usuario se haya guardado correctamente
-    bool usuarioGuardado = await _usuarioDao.existeEmail(email);
+      if (!mounted) return;
 
-    print('Usuario guardado: $usuarioGuardado');
+      if (emailExiste) {
+        setState(() {
+          mensajeError = 'Este correo ya existe';
+          registrando = false;
+        });
+        return;
+      }
 
-    if (!mounted) return;
-    Navigator.pop(context);
+      //obtenemos la fecha del registro en formato iso 8601
+      final String fechaRegistro = DateTime.now().toIso8601String();
+
+      //generamos el hash de la contraseña
+      final String hash = await _contrasenaService.generarHash(
+        contrasena,
+      );
+
+      if (!mounted) return;
+
+      final Usuario nuevoUsuario = Usuario(
+        usuario: nombreUsuario,
+        email: email,
+        contrasena: hash,
+        fechaRegistro: fechaRegistro,
+      );
+
+      //guardamos el user en la bbdd
+      await _usuarioDao.insertarUsuario(nuevoUsuario);
+
+      if (!mounted) return;
+
+      context.goNamed(Rutas.login);
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        mensajeError = 'No se ha podido completar el registro';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          registrando = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      widget._preferenciasService.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
     );
     return Scaffold(
       appBar: AppBar(title: Text('Registro')),
@@ -171,7 +186,10 @@ class _RegistroPageState extends State<RegistroPage> {
 
             const SizedBox(height: 24),
 
-            BotonPrincipal(texto: 'Registrarse', pulsar: registrarUsuario),
+            BotonPrincipal(
+              texto: registrando ? 'Registrando...' : 'Registrarse',
+              pulsar: registrarUsuario,
+            ),
           ],
         ),
       ),

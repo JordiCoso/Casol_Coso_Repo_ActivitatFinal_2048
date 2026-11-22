@@ -1,4 +1,5 @@
 //import 'package:_2048/routes.dart';
+import 'package:_2048/screens/ajustes.dart';
 import 'package:_2048/screens/estadisticas_page.dart';
 import 'package:_2048/screens/historial_page.dart';
 import 'package:_2048/screens/ranking_page.dart';
@@ -49,11 +50,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     //la aplicacion "escucha" los cambios.
     return ValueListenableBuilder<bool>(
-      valueListenable: widget._preferenciasService.temaOscuro,
+      valueListenable: PreferenciasService.instanciaPS.temaOscuro,
 
       builder: (context, temaOscuro, child) {
         final Map<String, Color> colores = obtenerEsquemaColoresActual(
-          widget._preferenciasService.obtenerTemaOscuro(),
+          PreferenciasService.instanciaPS.obtenerTemaOscuro(),
         );
         
         return MaterialApp(
@@ -112,7 +113,7 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
 
-          home: RankingPage(preferenciasService: widget._preferenciasService),
+          home: PantallaAjustes(),
           /*home: PantallaPrincipal(
             preferenciasService: widget._preferenciasService,
             databasehelper: widget._databasehelper,

@@ -1,21 +1,18 @@
+import 'package:_2048/services/preferenciasservice.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../data/usuario_dao.dart';
+import '../routes.dart';
 import '../services/contrasena_service.dart';
 import '/models/colores.dart';
-import '/screens/pantalla_principal.dart';
-
-import '/screens/registro_page.dart';
-import '/services/preferenciasservice.dart';
 import '/widgets/boton_principal.dart';
 import '/widgets/campo_texto_app.dart';
 
 import '../models/usuario.dart';
 
 class LoginPage extends StatefulWidget {
-  final PreferenciasService _preferenciasService;
-
-  const LoginPage({super.key, required this._preferenciasService});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -33,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController contrasenaController = TextEditingController();
 
   String mensajeError = '';
+  bool iniciandoSesion = false;
 
   @override
   void dispose() {
@@ -43,70 +41,78 @@ class _LoginPageState extends State<LoginPage> {
 
   //comprobamos datos
   Future<void> iniciarSesion() async {
-    if (usuarioController.text.trim().isEmpty) {
+    if (iniciandoSesion) return;
+
+    final String nombreUsuario = usuarioController.text.trim();
+    final String contrasena = contrasenaController.text;
+
+    if (nombreUsuario.isEmpty) {
       setState(() {
         mensajeError = 'El usuario no puede estar vacío';
       });
       return;
     }
 
-    if (contrasenaController.text.trim().isEmpty) {
+    if (contrasena.trim().isEmpty) {
       setState(() {
         mensajeError = 'La contraseña no puede estar vacía';
       });
       return;
     }
 
-    //buscamos el usuario en la bbdd
-    final Usuario? usuario = await _usuarioDao.obtenerUsuarioPorNombre(
-      usuarioController.text.trim(),
-    );
-
-    if (!mounted) return;
-
-    //comprobamos si existe el usuario
-    if (usuario == null) {
-      setState(() {
-        mensajeError = 'Usuario o contraseña incorrectos';
-      });
-      return;
-    }
-
-    //comprobamos la contraseña con el hash guardado
-    final bool contrasenaCorrecta = await _contrasenaService
-        .comprobarContrasena(contrasenaController.text, usuario.contrasena);
-
-    if (!mounted) return;
-
-    //mostramos un error si la contraseña es incorrecta
-    if (!contrasenaCorrecta) {
-      setState(() {
-        mensajeError = 'Usuario o contraseña incorrectos';
-      });
-      return;
-    }
-
-    //limpiamos el mensaje de error
     setState(() {
       mensajeError = '';
+      iniciandoSesion = true;
     });
 
-    //si los datos coinciden, abrimos ya la pantalla principal
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PantallaPrincipal(
-          preferenciasService: widget._preferenciasService,
-          usuario: usuario,
-        ),
-      ),
-    );
+    try {
+      final Usuario? usuario = await _usuarioDao.obtenerUsuarioPorNombre(
+        nombreUsuario,
+      );
+
+      if (!mounted) return;
+
+      if (usuario == null) {
+        setState(() {
+          mensajeError = 'Usuario o contraseña incorrectos';
+        });
+        return;
+      }
+
+      //comprobamos la contraseña con el hash almacenado
+      final bool contrasenaCorrecta = await _contrasenaService
+          .comprobarContrasena(contrasena, usuario.contrasena);
+
+      if (!mounted) return;
+
+      if (!contrasenaCorrecta) {
+        setState(() {
+          mensajeError = 'Usuario o contraseña incorrectos';
+        });
+        return;
+      }
+      //guardamos el ultimo jugador que ha iniciado sesion
+      PreferenciasService.instanciaPS.guardarUltimoJugador(usuario.usuario);
+      context.goNamed(Rutas.principal, extra: usuario);
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        mensajeError = 'No se ha podido iniciar sesión';
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          iniciandoSesion = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      widget._preferenciasService.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
     );
 
     return Scaffold(
@@ -135,21 +141,17 @@ class _LoginPageState extends State<LoginPage> {
 
             const SizedBox(height: 24),
 
-            BotonPrincipal(texto: 'Iniciar sesión', pulsar: iniciarSesion),
+            BotonPrincipal(
+              texto: iniciandoSesion ? 'Iniciando sesión...' : 'Iniciar sesión',
+              pulsar: iniciarSesion,
+            ),
 
             const SizedBox(height: 16),
 
             //si el usuario no tiene cuent, le damos la opcion de reigstrarse
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RegistroPage(
-                      preferenciasService: widget._preferenciasService,
-                    ),
-                  ),
-                );
+                context.goNamed(Rutas.registrar);
               },
               child: Text('Regístrate si no tienes cuenta'),
             ),

@@ -184,15 +184,15 @@ class _HistorialPageState extends State<HistorialPage> {
   }
 
   //repetimos el ultimo filtro
-  void _reintentar() {
+  Future<void> _reintentar() async {
     if (_ultimoFiltro == 'usuario') {
-      _filtrarPorUsuario();
+      await _filtrarPorUsuario();
     } else if (_ultimoFiltro == 'ficha') {
-      _filtrarPorFicha();
+      await _filtrarPorFicha();
     } else if (_ultimoFiltro == 'ambos') {
-      _filtrarAmbos();
+      await _filtrarAmbos();
     } else {
-      _cargarPartidas();
+      await _cargarPartidas();
     }
   }
 
@@ -213,6 +213,8 @@ class _HistorialPageState extends State<HistorialPage> {
 
       _reintentar();
     } catch (e) {
+      if (!mounted) return;
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -323,7 +325,7 @@ class _HistorialPageState extends State<HistorialPage> {
       body: RefreshIndicator(
         color: colores[NombreColores.principal],
         backgroundColor: colores[NombreColores.superficie],
-        onRefresh: _cargarPartidas,
+        onRefresh: _reintentar,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Center(

@@ -43,13 +43,12 @@ class PreferenciasService {
 
     inicializando.temaOscuro.value = inicializando.obtenerTemaOscuro();
 
-    inicializando.tamanoLetra.value = inicializando.obtenerTamanoLetra();
-
     return inicializando;
   }
 
   static const String claveDatoTema = 'temaOscuro';
-  static const String claveDatoTamanoLetra = 'tamanoLetra';
+  static const String claveUltimoJugador = 'ultimoJugador';
+  static const String claveMejorPuntuacion = 'mejorPuntuacion';
 
   void guardarTemaOscuro(bool nuevoTema) {
     _preferencias.setBool(claveDatoTema, nuevoTema);
@@ -62,15 +61,28 @@ class PreferenciasService {
     return _preferencias.getBool(claveDatoTema) ?? false;
   }
 
-  void guardarTamanoLetra(double nuevoTamano) {
-    _preferencias.setDouble(claveDatoTamanoLetra, nuevoTamano);
-
-    // Se avisa a la app que se ha cambiado el tamaño.
-    tamanoLetra.value = nuevoTamano;
+  //guardamos el nombre del ultimo jugador
+  void guardarUltimoJugador(String nombreUsuario) {
+    _preferencias.setString(claveUltimoJugador, nombreUsuario);
   }
 
-  double obtenerTamanoLetra() {
-    return _preferencias.getDouble(claveDatoTamanoLetra) ?? 14;
+  //obtenemos el nombre del ultimo jugador
+  String obtenerUltimoJugador() {
+    return _preferencias.getString(claveUltimoJugador) ?? '';
+  }
+
+  //guardamos la mejor puntuacion
+  void guardarMejorPuntuacion(int puntuacion) {
+    int mejorPuntuacion = obtenerMejorPuntuacion();
+
+    if (puntuacion > mejorPuntuacion) {
+      _preferencias.setInt(claveMejorPuntuacion, puntuacion);
+    }
+  }
+
+  //obtenemos la mejor puntuacion
+  int obtenerMejorPuntuacion() {
+    return _preferencias.getInt(claveMejorPuntuacion) ?? 0;
   }
 
   Future<void> borrarTodosLosDatos() async {
@@ -79,7 +91,4 @@ class PreferenciasService {
 
   /// Guarda el modo oscuro y avisa cuando cambia.
   ValueNotifier<bool> temaOscuro = ValueNotifier<bool>(false);
-
-  /// Guarda el tamaño de letra y avisa cuando cambia.
-  ValueNotifier<double> tamanoLetra = ValueNotifier<double>(14);
 }

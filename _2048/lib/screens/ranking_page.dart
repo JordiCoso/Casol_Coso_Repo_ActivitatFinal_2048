@@ -58,7 +58,7 @@ class _RankingPageState extends State<RankingPage> {
   }
 
   //abrimos los detalles de la partida seleccionada
-  Future<void> _abrirDetalles(int idPartida) async {
+  void _abrirDetalles(int idPartida) {
     context.goNamed(
       Rutas.detallePartida,
       pathParameters: {Rutas.parametroDetallePartidaID: idPartida.toString()},
@@ -140,11 +140,6 @@ class _RankingPageState extends State<RankingPage> {
                             child: PartidaListItem(
                               partida: _partidas[i],
                               onPulsar: () {
-                                if (_partidas[i].id != null) {
-                                  _abrirDetalles(_partidas[i].id!);
-                                }
-                              },
-                              onPulsacionLarga: () {
                                 if (_partidas[i].id != null) {
                                   _abrirDetalles(_partidas[i].id!);
                                 }
