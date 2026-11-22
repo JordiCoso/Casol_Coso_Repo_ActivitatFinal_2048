@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../data/partida_dao.dart';
+import '../data/usuario_dao.dart';
 import '../models/partida.dart';
 import '../routes.dart';
 import '../widgets/async_data_view.dart';
@@ -21,6 +22,7 @@ class HistorialPage extends StatefulWidget {
 
 class _HistorialPageState extends State<HistorialPage> {
   final PartidaDao _partidaDao = PartidaDao();
+  final UsuarioDao _usuarioDao = UsuarioDao();
   final TextEditingController _usuarioController = TextEditingController();
   final TextEditingController _fichaController = TextEditingController();
 
@@ -162,17 +164,24 @@ class _HistorialPageState extends State<HistorialPage> {
     });
 
     try {
+      //buscamos el usuario para obtener su id
+      final usuario = await _usuarioDao.obtenerUsuarioPorNombre(nombreUsuario);
+
+      if (usuario == null) {
+        if (!mounted) return;
+
+        setState(() {
+          _partidas = [];
+          _cargando = false;
+        });
+
+        return;
+      }
+
       final resultado = await _partidaDao.obtenerPartidasFiltradas(
-        nombreUsuario,
+        usuario.id!,
         fichaMaxima,
       );
-
-      if (!mounted) return;
-
-      setState(() {
-        _partidas = resultado;
-        _cargando = false;
-      });
     } catch (e) {
       if (!mounted) return;
 

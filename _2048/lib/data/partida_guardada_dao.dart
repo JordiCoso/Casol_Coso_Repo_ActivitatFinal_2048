@@ -10,6 +10,7 @@ class PartidaGuardadaDao {
   Future<int> guardarPartida(PartidaGuardada partida) async {
     final int resultado = await _db.insert(DatabaseHelper.tablaGuardado, {
       DatabaseHelper.columnaGuardadoId: 1,
+      DatabaseHelper.columnaGuardadoUsuarioId: partida.usuarioId,
       DatabaseHelper.columnaGuardadoTablero: partida.tablero,
       DatabaseHelper.columnaGuardadoPuntuacion: partida.puntuacion,
       DatabaseHelper.columnaGuardadoMovimientos: partida.movimientos,

@@ -26,7 +26,7 @@ class PartidaDao {
   Future<List<Partida>> obtenerPartidasUsuario(String nombreUsuario) async {
     final resultado = await _db.query(
       DatabaseHelper.tablaPartidas,
-      where: '${DatabaseHelper.columnaPartidasUsuario} = ?',
+      where: '${DatabaseHelper.columnaPartidasUsuarioId} = ?',
       whereArgs: [nombreUsuario],
       orderBy: '${DatabaseHelper.columnaPartidasFecha} DESC',
     );
@@ -35,7 +35,21 @@ class PartidaDao {
     List<Partida> partidas = [];
 
     for (final mapa in resultado) {
-      partidas.add(Partida.fromMap(mapa));
+      //pillamos el nombre del usuario por su id
+      final resultadoUsuario = await _db.query(
+        DatabaseHelper.tablaUsuarios,
+        where: '${DatabaseHelper.columnaUsuariosId} = ?',
+        whereArgs: [mapa['usuario_id']],
+      );
+
+      //añadimos el nombre al mapa de la partida
+      Map<String, Object?> datosPartida = Map<String, Object?>.from(mapa);
+
+      datosPartida['usuario'] =
+          resultadoUsuario[0][DatabaseHelper.columnaUsuariosUsuario];
+
+      //convertimos el mapa en un objeto partida
+      partidas.add(Partida.fromMap(datosPartida));
     }
 
     return partidas;
@@ -49,7 +63,22 @@ class PartidaDao {
     );
 
     if (resultado.isNotEmpty) {
-      return Partida.fromMap(resultado[0]);
+      //pillamos el nombre del usuario por su id
+      final resultadoUsuario = await _db.query(
+        DatabaseHelper.tablaUsuarios,
+        where: '${DatabaseHelper.columnaUsuariosId} = ?',
+        whereArgs: [resultado[0]['usuario_id']],
+      );
+
+      //añadimos el nombre al mapa de la partida
+      Map<String, Object?> datosPartida = Map<String, Object?>.from(
+        resultado[0],
+      );
+
+      datosPartida['usuario'] =
+          resultadoUsuario[0][DatabaseHelper.columnaUsuariosUsuario];
+
+      return Partida.fromMap(datosPartida);
     }
 
     return null;
@@ -85,16 +114,27 @@ class PartidaDao {
     List<Partida> partidas = [];
 
     for (final mapa in resultado) {
-      partidas.add(Partida.fromMap(mapa));
+      //pillamos el nombre del usuario por su id
+      final resultadoUsuario = await _db.query(
+        DatabaseHelper.tablaUsuarios,
+        where: '${DatabaseHelper.columnaUsuariosId} = ?',
+        whereArgs: [mapa['usuario_id']],
+      );
+
+      //añadimos el nombre al mapa de la partida
+      Map<String, Object?> datosPartida = Map<String, Object?>.from(mapa);
+
+      datosPartida['usuario'] =
+          resultadoUsuario[0][DatabaseHelper.columnaUsuariosUsuario];
+
+      partidas.add(Partida.fromMap(datosPartida));
     }
 
     return partidas;
   }
 
   //obtenemos las estadisticas de las partidas de un usuario
-  Future<Map<String, Object?>> obtenerEstadisticasUsuario(
-    String nombreUsuario,
-  ) async {
+  Future<Map<String, Object?>> obtenerEstadisticasUsuario(int usuarioId) async {
     final resultado = await _db.query(
       DatabaseHelper.tablaPartidas,
       columns: [
@@ -102,23 +142,23 @@ class PartidaDao {
         'MAX(${DatabaseHelper.columnaPartidasPuntuacion}) AS $mejorPuntuacion',
         'MAX(${DatabaseHelper.columnaPartidasFichamaxima}) AS $mejorFicha',
       ],
-      where: '${DatabaseHelper.columnaPartidasUsuario} = ?',
-      whereArgs: [nombreUsuario],
+      where: '${DatabaseHelper.columnaPartidasUsuarioId} = ?',
+      whereArgs: [usuarioId],
     );
     return resultado[0];
   }
 
   //pillamos las partidas filtradas por usuario y ficha maxima
   Future<List<Partida>> obtenerPartidasFiltradas(
-    String nombreUsuario,
+    int usuarioId,
     int fichaMaxima,
   ) async {
     final resultado = await _db.query(
       DatabaseHelper.tablaPartidas,
       where:
-          '${DatabaseHelper.columnaPartidasUsuario} = ? AND '
+          '${DatabaseHelper.columnaPartidasUsuarioId} = ? AND '
           '${DatabaseHelper.columnaPartidasFichamaxima} >= ?',
-      whereArgs: [nombreUsuario, fichaMaxima],
+      whereArgs: [usuarioId, fichaMaxima],
       orderBy: '${DatabaseHelper.columnaPartidasFecha} DESC',
     );
 
@@ -126,7 +166,20 @@ class PartidaDao {
     List<Partida> partidas = [];
 
     for (final mapa in resultado) {
-      partidas.add(Partida.fromMap(mapa));
+      //pillamos el nombre de usuario por su id
+      final resultadoUsuario = await _db.query(
+        DatabaseHelper.tablaUsuarios,
+        where: '${DatabaseHelper.columnaUsuariosId} = ?',
+        whereArgs: [mapa['usuario_id']],
+      );
+
+      //añadimos el nombre al mapa de la partida
+      Map<String, Object?> datosPartida = Map<String, Object?>.from(mapa);
+
+      datosPartida['usuario'] =
+          resultadoUsuario[0][DatabaseHelper.columnaUsuariosUsuario];
+
+      partidas.add(Partida.fromMap(datosPartida));
     }
 
     return partidas;
@@ -143,7 +196,19 @@ class PartidaDao {
     List<Partida> partidas = [];
 
     for (final mapa in resultado) {
-      partidas.add(Partida.fromMap(mapa));
+      //pillamos el nombre de usuario por su id
+      final resultadoUsuario = await _db.query(
+        DatabaseHelper.tablaUsuarios,
+        where: '${DatabaseHelper.columnaUsuariosId} = ?',
+        whereArgs: [mapa['usuario_id']],
+      );
+
+      Map<String, Object?> datosPartida = Map<String, Object?>.from(mapa);
+
+      datosPartida['usuario'] =
+          resultadoUsuario[0][DatabaseHelper.columnaUsuariosUsuario];
+
+      partidas.add(Partida.fromMap(datosPartida));
     }
 
     return partidas;
@@ -162,7 +227,18 @@ class PartidaDao {
     List<Partida> partidas = [];
 
     for (final mapa in resultado) {
-      partidas.add(Partida.fromMap(mapa));
+      final resultadoUsuario = await _db.query(
+        DatabaseHelper.tablaUsuarios,
+        where: '${DatabaseHelper.columnaUsuariosId} = ?',
+        whereArgs: [mapa['usuario_id']],
+      );
+
+      Map<String, Object?> datosPartida = Map<String, Object?>.from(mapa);
+
+      datosPartida['usuario'] =
+          resultadoUsuario[0][DatabaseHelper.columnaUsuariosUsuario];
+
+      partidas.add(Partida.fromMap(datosPartida));
     }
 
     return partidas;
@@ -188,22 +264,39 @@ class PartidaDao {
     final resultado = await _db.query(
       DatabaseHelper.tablaPartidas,
       columns: [
-        DatabaseHelper.columnaPartidasUsuario,
+        DatabaseHelper.columnaPartidasUsuarioId,
         'COUNT(*) AS $totalPartidas',
         'MAX(${DatabaseHelper.columnaPartidasPuntuacion}) AS $mejorPuntuacion',
       ],
-      groupBy: DatabaseHelper.columnaPartidasUsuario,
+      groupBy: DatabaseHelper.columnaPartidasUsuarioId,
       orderBy: '$mejorPuntuacion DESC',
     );
 
-    return resultado;
+    List<Map<String, Object?>> estadisticas = [];
+
+    for (final mapa in resultado) {
+      final resultadoUsuario = await _db.query(
+        DatabaseHelper.tablaUsuarios,
+        where: '${DatabaseHelper.columnaUsuariosId} = ?',
+        whereArgs: [mapa['usuario_id']],
+      );
+
+      Map<String, Object?> datosJugador = Map<String, Object?>.from(mapa);
+
+      datosJugador['usuario'] =
+          resultadoUsuario[0][DatabaseHelper.columnaUsuariosUsuario];
+
+      estadisticas.add(datosJugador);
+    }
+
+    return estadisticas;
   }
 
   //guardamos la partida terminada y eliminamos la partida pendiente
   Future<void> finalizarPartida(Partida partida) async {
     await _db.transaction((txn) async {
       await txn.insert(DatabaseHelper.tablaPartidas, {
-        DatabaseHelper.columnaPartidasUsuario: partida.usuario,
+        DatabaseHelper.columnaPartidasUsuarioId: partida.usuarioId,
         DatabaseHelper.columnaPartidasPuntuacion: partida.puntuacion,
         DatabaseHelper.columnaPartidasFichamaxima: partida.fichaMaxima,
         DatabaseHelper.columnaPartidasMovimientos: partida.movimientos,

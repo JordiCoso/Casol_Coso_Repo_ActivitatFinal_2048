@@ -79,7 +79,7 @@ class DatabaseHelper {
       'usuarios'; // TODO usuarios que se han registrado en la app
 
   static const columnaUsuariosId = 'id'; // TODO Identificador de la partida
-  static const columnaUsuariosUsuario = 'usuario'; // TODO Nombre del jugador
+  static const columnaUsuariosUsuario = 'usuario'; // normalizacion de la tabla
   static const columnaUsuariosFecharegistro =
       'fecha_registro'; // TODO FECHA Y HORA ISO 8601
   static const columnaUsuariosEmail =
@@ -90,7 +90,8 @@ class DatabaseHelper {
       'partidas'; // TODO historial de partidas terminadas
 
   static const columnaPartidasId = 'id'; // TODO Identificador de la partida
-  static const columnaPartidasUsuario = 'usuario'; // TODO Nombre del jugador
+  static const columnaPartidasUsuarioId =
+      'usuario_id'; // TODO Nombre del jugador
   static const columnaPartidasPuntuacion = 'puntuacion'; // TODO Puntos finales
   static const columnaPartidasFichamaxima = 'ficha_maxima'; // TODO Valor de la ficha más alta conseguida (2, 4, ..., 2048)
   static const columnaPartidasMovimientos =
@@ -104,6 +105,7 @@ class DatabaseHelper {
 
   static const columnaGuardadoId =
       'id'; // TODO Siempre 1 (solo existe una partida en curso)
+  static const columnaGuardadoUsuarioId = 'usuario_id';
   static const columnaGuardadoTablero = 'tablero'; // TODO Estado del tablero serializado (por ejemplo, JSON con la lista de 16 valores)
   static const columnaGuardadoPuntuacion =
       'puntuacion'; // TODO Puntuación actual
@@ -125,23 +127,28 @@ class DatabaseHelper {
     );
 
     packDeInstrucciones.execute(
+      //normalizacion y comprobacion para q no hayan numeros negativos
       'CREATE TABLE $tablaPartidas ('
       '$columnaPartidasId INTEGER PRIMARY KEY AUTOINCREMENT,'
-      '$columnaPartidasUsuario TEXT NOT NULL,'
-      '$columnaPartidasPuntuacion INTEGER NOT NULL,'
+      '$columnaPartidasUsuarioId INTEGER NOT NULL,'
+      '$columnaPartidasPuntuacion INTEGER NOT NULL CHECK ($columnaPartidasPuntuacion >= 0),'
       '$columnaPartidasFichamaxima INTEGER NOT NULL,'
-      '$columnaPartidasMovimientos INTEGER NOT NULL,'
-      '$columnaPartidasDuracionsegundos INTEGER NOT NULL,'
-      '$columnaPartidasFecha TEXT NOT NULL)',
+      '$columnaPartidasMovimientos INTEGER NOT NULL CHECK ($columnaPartidasMovimientos >= 0),'
+      '$columnaPartidasDuracionsegundos INTEGER NOT NULL CHECK ($columnaPartidasDuracionsegundos >= 0),'
+      '$columnaPartidasFecha TEXT NOT NULL,'
+      'FOREIGN KEY ($columnaPartidasUsuarioId) REFERENCES $tablaUsuarios($columnaUsuariosId))',
     );
 
     packDeInstrucciones.execute(
+      //normalizacion y comprobacion para q no hayan numeros negativos
       'CREATE TABLE $tablaGuardado ('
-      '$columnaGuardadoId INTEGER PRIMARY KEY, '
+      '$columnaGuardadoId INTEGER PRIMARY KEY CHECK ($columnaGuardadoId = 1),'
+      '$columnaGuardadoUsuarioId INTEGER NOT NULL. '
       '$columnaGuardadoTablero  TEXT NOT NULL, '
-      '$columnaGuardadoPuntuacion  INTEGER NOT NULL, '
-      '$columnaGuardadoMovimientos  INTEGER NOT NULL, '
-      '$columnaGuardadoSegundostranscurridos  INTEGER NOT NULL) ',
+      '$columnaGuardadoPuntuacion  INTEGER NOT NULL CHECK ($columnaGuardadoPuntuacion >= 0), '
+      '$columnaGuardadoMovimientos  INTEGER NOT NULL CHECK ($columnaGuardadoMovimientos >= 0), '
+      '$columnaGuardadoSegundostranscurridos  INTEGER NOT NULL CHECK ($columnaGuardadoSegundostranscurridos >= 0),'
+      'FOREIGN KEY ($columnaGuardadoUsuarioId) REFERENCES $tablaUsuarios($columnaUsuariosId)) ',
     );
 
     await packDeInstrucciones.commit();

@@ -1,5 +1,6 @@
 class Partida {
   final int? id;
+  final int usuarioId;
   final String usuario;
   final int puntuacion;
   final int fichaMaxima;
@@ -9,6 +10,7 @@ class Partida {
 
   Partida({
     this.id,
+    required this.usuarioId,
     required this.usuario,
     required this.puntuacion,
     required this.fichaMaxima,
@@ -21,6 +23,7 @@ class Partida {
   Map<String, Object?> toMap() {
     return {
       'id': id,
+      'usuario_id': usuarioId,
       'usuario': usuario,
       'puntuacion': puntuacion,
       'ficha_maxima': fichaMaxima,
@@ -34,6 +37,7 @@ class Partida {
   static Partida fromMap(Map<String, Object?> mapa) {
     return Partida(
       id: mapa['id'] as int?,
+      usuarioId: mapa['usuario_id'] as int,
       usuario: mapa['usuario'] as String,
       puntuacion: mapa['puntuacion'] as int,
       fichaMaxima: mapa['ficha_maxima'] as int,

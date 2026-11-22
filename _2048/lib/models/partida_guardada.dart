@@ -1,6 +1,6 @@
-
 class PartidaGuardada {
   final int? id;
+  final int usuarioId;
   final String tablero;
   final int puntuacion;
   final int movimientos;
@@ -8,6 +8,7 @@ class PartidaGuardada {
 
   PartidaGuardada({
     this.id,
+    required this.usuarioId,
     required this.tablero,
     required this.puntuacion,
     required this.movimientos,
@@ -18,6 +19,7 @@ class PartidaGuardada {
   Map<String, Object?> toMap() {
     return {
       'id': id,
+      'usuario_id': usuarioId,
       'tablero': tablero,
       'puntuacion': puntuacion,
       'movimientos': movimientos,
@@ -29,6 +31,7 @@ class PartidaGuardada {
   static PartidaGuardada fromMap(Map<String, Object?> mapa) {
     return PartidaGuardada(
       id: mapa['id'] as int?,
+      usuarioId: mapa['usuario_id'] as int,
       tablero: mapa['tablero'] as String,
       puntuacion: mapa['puntuacion'] as int,
       movimientos: mapa['movimientos'] as int,

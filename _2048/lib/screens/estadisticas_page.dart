@@ -1,4 +1,5 @@
 import 'package:_2048/data/databasehelper.dart';
+import 'package:_2048/data/usuario_dao.dart';
 import 'package:_2048/models/iconos.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,7 @@ class EstadisticasPage extends StatefulWidget {
 class _EstadisticasPageState extends State<EstadisticasPage> {
   final TextEditingController _usuarioController = TextEditingController();
   final PartidaDao _partidaDao = PartidaDao();
+  final UsuarioDao _usuarioDao = UsuarioDao();
 
   List<Map<String, Object?>> _estadisticasJugadores = [];
   Map<String, Object?> _estadisticasUsuario = {};
@@ -71,8 +73,19 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
     }
 
     try {
+      final usuario = await _usuarioDao.obtenerUsuarioPorNombre(nombreUsuario);
+      if (usuario == null) {
+        if (!mounted) return;
+
+        setState(() {
+          _estadisticasUsuario = {};
+          _busquedaRealizada = true;
+        });
+        return;
+      }
+
       final resultado = await _partidaDao.obtenerEstadisticasUsuario(
-        nombreUsuario,
+        usuario.id!,
       );
 
       if (!mounted) return;
@@ -341,7 +354,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
                         Column(
                           children: [
                             Text(
-                              '${jugador[DatabaseHelper.columnaPartidasUsuario]}',
+                              '${jugador[DatabaseHelper.columnaPartidasUsuarioId]}',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
