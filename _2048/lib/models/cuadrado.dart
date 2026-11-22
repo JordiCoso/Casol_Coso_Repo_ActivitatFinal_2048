@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class Cuadrado {
   String posicion;
+  bool combinado = false;
   final int valor;
 
   String get x {

@@ -37,6 +37,10 @@ class _BoardWidgetState extends State<BoardWidget> {
     gridVisual.clear();
     tableroActual.forEach((key, value) => gridVisual.add(value.toContainer()));
 
+    for (int i = 0; i < gridVisual.length; i++) {
+      print('${gridVisual[i]} numero: $i');
+    }
+
     return GestureDetector(
       child: Container(
         alignment: Alignment.center,
@@ -119,6 +123,7 @@ class _BoardWidgetState extends State<BoardWidget> {
     );
     tableroActual.forEach((posicion, cuadrado) {
       if (cuadrado.valor != 0) {
+        cuadrado.combinado = false;
         nuevoTablero[cuadrado.posicion] = cuadrado;
       }
     });
@@ -133,6 +138,8 @@ class _BoardWidgetState extends State<BoardWidget> {
       posicion: cuadradoSiguiente.posicion,
       valor: cuadradoActual.valor + cuadradoSiguiente.valor,
     );
+
+    cuadradoNuevo.combinado = true;
 
     tableroActual[cuadradoActual.posicion] = Cuadrado.vacio();
     tableroActual[cuadradoSiguiente.posicion] = cuadradoNuevo;
@@ -155,15 +162,21 @@ class _BoardWidgetState extends State<BoardWidget> {
             Cuadrado cuadradoSiguiente = tableroActual['$i$k']!;
 
             if (cuadradoSiguiente.valor != 0) {
-              if (cuadradoActual.valor == cuadradoSiguiente.valor) {
+              if (cuadradoActual.valor == cuadradoSiguiente.valor &&
+                  cuadradoActual.combinado == false &&
+                  cuadradoSiguiente.combinado == false) {
                 combinar(cuadradoActual, cuadradoSiguiente);
                 terminado = true;
               } else {
+                tableroActual[cuadradoActual.posicion] = Cuadrado.vacio();
                 cuadradoActual.x = '${k + 1}';
+                tableroActual[cuadradoActual.posicion] = cuadradoActual;
                 terminado = true;
               }
             } else if (k == 0) {
+              tableroActual[cuadradoActual.posicion] = Cuadrado.vacio();
               cuadradoActual.x = '$k';
+              tableroActual[cuadradoActual.posicion] = cuadradoActual;
               terminado = true;
             }
           }
@@ -185,15 +198,21 @@ class _BoardWidgetState extends State<BoardWidget> {
             Cuadrado cuadradoSiguiente = tableroActual['$i$k']!;
 
             if (cuadradoSiguiente.valor != 0) {
-              if (cuadradoActual.valor == cuadradoSiguiente.valor) {
+              if (cuadradoActual.valor == cuadradoSiguiente.valor &&
+                  cuadradoActual.combinado == false &&
+                  cuadradoSiguiente.combinado == false) {
                 combinar(cuadradoActual, cuadradoSiguiente);
                 terminado = true;
               } else {
+                tableroActual[cuadradoActual.posicion] = Cuadrado.vacio();
                 cuadradoActual.x = '${k - 1}';
+                tableroActual[cuadradoActual.posicion] = cuadradoActual;
                 terminado = true;
               }
             } else if (k == 3) {
+              tableroActual[cuadradoActual.posicion] = Cuadrado.vacio();
               cuadradoActual.x = '$k';
+              tableroActual[cuadradoActual.posicion] = cuadradoActual;
               terminado = true;
             }
           }
@@ -215,15 +234,21 @@ class _BoardWidgetState extends State<BoardWidget> {
             Cuadrado cuadradoSiguiente = tableroActual['$k$i']!;
 
             if (cuadradoSiguiente.valor != 0) {
-              if (cuadradoActual.valor == cuadradoSiguiente.valor) {
+              if (cuadradoActual.valor == cuadradoSiguiente.valor &&
+                  cuadradoActual.combinado == false &&
+                  cuadradoSiguiente.combinado == false) {
                 combinar(cuadradoActual, cuadradoSiguiente);
                 terminado = true;
               } else {
+                tableroActual[cuadradoActual.posicion] = Cuadrado.vacio();
                 cuadradoActual.y = '${k + 1}';
+                tableroActual[cuadradoActual.posicion] = cuadradoActual;
                 terminado = true;
               }
             } else if (k == 0) {
+              tableroActual[cuadradoActual.posicion] = Cuadrado.vacio();
               cuadradoActual.y = '$k';
+              tableroActual[cuadradoActual.posicion] = cuadradoActual;
               terminado = true;
             }
           }
@@ -245,15 +270,21 @@ class _BoardWidgetState extends State<BoardWidget> {
             Cuadrado cuadradoSiguiente = tableroActual['$k$i']!;
 
             if (cuadradoSiguiente.valor != 0) {
-              if (cuadradoActual.valor == cuadradoSiguiente.valor) {
+              if (cuadradoActual.valor == cuadradoSiguiente.valor &&
+                  cuadradoActual.combinado == false &&
+                  cuadradoSiguiente.combinado == false) {
                 combinar(cuadradoActual, cuadradoSiguiente);
                 terminado = true;
               } else {
+                tableroActual[cuadradoActual.posicion] = Cuadrado.vacio();
                 cuadradoActual.y = '${k - 1}';
+                tableroActual[cuadradoActual.posicion] = cuadradoActual;
                 terminado = true;
               }
             } else if (k == 3) {
+              tableroActual[cuadradoActual.posicion] = Cuadrado.vacio();
               cuadradoActual.y = '$k';
+              tableroActual[cuadradoActual.posicion] = cuadradoActual;
               terminado = true;
             }
           }
