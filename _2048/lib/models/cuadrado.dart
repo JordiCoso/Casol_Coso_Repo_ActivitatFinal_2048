@@ -1,6 +1,7 @@
 import 'package:_2048/models/colores.dart';
 import 'package:_2048/services/preferenciasservice.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 class Cuadrado {
   String posicion;
@@ -33,9 +34,9 @@ class Cuadrado {
     posicion = posicionNueva;
   }
 
-  Container toContainer() {
+  Container toContainer(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
     );
     return Container(
       color: colores['$valor'],

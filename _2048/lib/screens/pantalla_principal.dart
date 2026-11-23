@@ -23,9 +23,9 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
   @override
   Widget build(BuildContext context) {
     final Map<String, Color> colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
     );
-    bool modo = PreferenciasService.instanciaPS.obtenerTemaOscuro();
+    bool modo = PreferenciasService.instanciaPS.obtenerTemaOscuro(context);
     return Scaffold(
       body: Center(
         child: Column(

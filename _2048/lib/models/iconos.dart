@@ -20,6 +20,7 @@ class NombreIconos {
   static const String estadisticas = 'Estadísticas';
   static const String paleta = 'Paleta';
   static const String papelera = 'Papelera';
+  static const String historial = 'Historial';
 }
 
 const Map<String, IconData> listaIconos = {
@@ -40,4 +41,5 @@ const Map<String, IconData> listaIconos = {
   NombreIconos.estadisticas: Icons.scoreboard_outlined,
   NombreIconos.paleta: Icons.palette_outlined,
   NombreIconos.papelera: Icons.delete_outline_outlined,
+  NombreIconos.historial: Icons.history,
 };

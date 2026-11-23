@@ -34,73 +34,80 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
+//creamos el tema utilizando nuestras paletas
+ThemeData crearTema(bool temaOscuro) {
+  final Map<String, Color> colores = obtenerEsquemaColoresActual(temaOscuro);
+
+  return ThemeData(
+    scaffoldBackgroundColor: colores[NombreColores.fondo],
+
+    textTheme: TextTheme(
+      titleLarge: GoogleFonts.poppins(
+        fontWeight: FontWeight.w600,
+        fontSize: 28,
+        color: colores[NombreColores.textoPrincipal],
+      ),
+      titleMedium: GoogleFonts.poppins(
+        fontWeight: FontWeight.w600,
+        fontSize: 18,
+        color: colores[NombreColores.textoPrincipal],
+      ),
+      bodyMedium: GoogleFonts.poppins(
+        fontWeight: FontWeight.normal,
+        fontSize: 14,
+        color: colores[NombreColores.textoSecundario],
+      ),
+      labelLarge: GoogleFonts.poppins(
+        fontWeight: FontWeight.w600,
+        fontSize: 16,
+        color: colores[NombreColores.superficie],
+      ),
+    ),
+
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(width: 1.5, color: colores[NombreColores.bordes]!),
+        elevation: 10,
+        minimumSize: Size.square(10),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        iconColor: colores[NombreColores.textoSecundario]!,
+      ),
+    ),
+
+    checkboxTheme: CheckboxThemeData(),
+
+    colorScheme: ColorScheme(
+      brightness: temaOscuro ? Brightness.dark : Brightness.light,
+      primary: colores[NombreColores.principal]!,
+      onPrimary: colores[NombreColores.textoPrincipal]!,
+      secondary: colores[NombreColores.secundario]!,
+      onSecondary: colores[NombreColores.textoPrincipal]!,
+      error: colores[NombreColores.estadoError]!,
+      onError: colores[NombreColores.textoPrincipal]!,
+      surface: colores[NombreColores.superficie]!,
+      onSurface: colores[NombreColores.textoPrincipal]!,
+    ),
+  );
+}
+
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    //la aplicacion "escucha" los cambios.
-    return ValueListenableBuilder<bool>(
-      valueListenable: PreferenciasService.instanciaPS.temaOscuro,
+    //la aplicacion escucha los cambios del modo de tema
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: PreferenciasService.instanciaPS.modoTema,
 
-      builder: (context, temaOscuro, child) {
-        final Map<String, Color> colores = obtenerEsquemaColoresActual(
-          PreferenciasService.instanciaPS.obtenerTemaOscuro(),
-        );
-
+      builder: (context, modoTema, child) {
         return MaterialApp.router(
-          //return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: '2048',
 
-          theme: ThemeData(
-            scaffoldBackgroundColor: colores[NombreColores.fondo],
+          themeMode: modoTema,
 
-            textTheme: TextTheme(
-              titleLarge: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                fontSize: 28,
-                color: colores[NombreColores.textoPrincipal],
-              ),
-              titleMedium: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                color: colores[NombreColores.textoPrincipal],
-              ),
-              bodyMedium: GoogleFonts.poppins(
-                fontWeight: FontWeight.normal,
-                fontSize: 14,
-                color: colores[NombreColores.textoSecundario],
-              ),
-              labelLarge: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-                color: colores[NombreColores.superficie],
-              ),
-            ),
+          theme: crearTema(false),
 
-            outlinedButtonTheme: OutlinedButtonThemeData(
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(
-                  width: 1.5,
-                  color: colores[NombreColores.bordes]!,
-                ),
-                elevation: 10,
-                minimumSize: Size.square(10),
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                iconColor: colores[NombreColores.textoSecundario]!,
-              ),
-            ),
-
-            checkboxTheme: CheckboxThemeData(),
-
-            colorScheme: ColorScheme.light(
-              primary: colores[NombreColores.principal]!,
-              secondary: colores[NombreColores.secundario]!,
-              surface: colores[NombreColores.superficie]!,
-            ),
-          ),
+          darkTheme: crearTema(true),
 
           routerConfig: router,
         );

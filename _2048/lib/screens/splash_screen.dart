@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../models/usuario.dart';
 import '../routes.dart';
+import '../widgets/barra_navegacion.dart';
 import '/models/colores.dart';
 import '/models/iconos.dart';
 import '/services/preferenciasservice.dart';
@@ -17,10 +18,11 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
     );
 
     return Scaffold(
+      bottomNavigationBar: BarraNavegacion(indiceActual: 0),
       body: Center(
         child: Column(
           children: [
@@ -31,7 +33,7 @@ class SplashScreen extends StatelessWidget {
                   texto: 'Comenzar',
                   icono: listaIconos[NombreIconos.ajustes]!,
                   pulsar: () async {
-                    bool? modo = await showDialog<bool>(
+                    ThemeMode? modo = await showDialog<ThemeMode>(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
@@ -43,56 +45,29 @@ class SplashScreen extends StatelessWidget {
                           ),
                           contentPadding: EdgeInsets.all(16),
 
-                          content: Text(
-                            '¿Quieres el modo claro o el modo oscuro?',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            textAlign: TextAlign.center,
-                          ),
                           actionsPadding: EdgeInsets.all(16),
                           actionsAlignment: MainAxisAlignment.center,
                           actions: [
-                            ElevatedButton(
-                              onPressed: () => Navigator.pop(context, false),
-                              style: ElevatedButton.styleFrom(
-                                side: BorderSide(
-                                  width: 1.5,
-                                  color: colores[NombreColores.principal]!,
+                            Column(
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, ThemeMode.light),
+                                  child: Text('Modo claro'),
                                 ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+
+                                ElevatedButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, ThemeMode.dark),
+                                  child: Text('Modo oscuro'),
                                 ),
-                                fixedSize: Size(140, 50),
-                                padding: EdgeInsets.all(0),
-                              ),
-                              child: Text(
-                                'Modo claro',
-                                style: Theme.of(context).textTheme.labelLarge
-                                    ?.copyWith(
-                                      color: colores[NombreColores.principal],
-                                    ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Expanded(flex: 1, child: SizedBox()),
-                            ElevatedButton(
-                              onPressed: () => Navigator.pop(context, true),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    colores[NombreColores.principal]!,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+
+                                ElevatedButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, ThemeMode.system),
+                                  child: Text('Tema del sistema'),
                                 ),
-                                fixedSize: Size(140, 50),
-                                padding: EdgeInsets.all(0),
-                              ),
-                              child: Text(
-                                'Modo oscuro',
-                                style: Theme.of(context).textTheme.labelLarge
-                                    ?.copyWith(
-                                      color: colores[NombreColores.superficie],
-                                    ),
-                                textAlign: TextAlign.center,
-                              ),
+                              ],
                             ),
                           ],
                         );
@@ -101,7 +76,7 @@ class SplashScreen extends StatelessWidget {
 
                     if (modo == null) return;
 
-                    PreferenciasService.instanciaPS.guardarTemaOscuro(modo);
+                    PreferenciasService.instanciaPS.guardarModoTema(modo);
                   },
                 ),
               ],

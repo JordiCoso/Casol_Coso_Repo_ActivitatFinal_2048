@@ -35,7 +35,7 @@ class _BoardWidgetState extends State<BoardWidget> {
   @override
   Widget build(BuildContext context) {
     gridVisual.clear();
-    tableroActual.forEach((key, value) => gridVisual.add(value.toContainer()));
+    tableroActual.forEach((key, value) => gridVisual.add(value.toContainer(context)));
 
     for (int i = 0; i < gridVisual.length; i++) {
       print('${gridVisual[i]} numero: $i');

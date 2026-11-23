@@ -9,6 +9,7 @@ import '../data/usuario_dao.dart';
 import '../models/partida.dart';
 import '../routes.dart';
 import '../widgets/async_data_view.dart';
+import '../widgets/barra_navegacion.dart';
 import '../widgets/confirm_dialog.dart';
 import '../widgets/empty_state_view.dart';
 import '../widgets/partida_list_item.dart';
@@ -346,10 +347,11 @@ class _HistorialPageState extends State<HistorialPage> {
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
     );
 
     return Scaffold(
+      bottomNavigationBar: BarraNavegacion(indiceActual: 1),
       appBar: AppBar(
         title: Text(
           'Historial',
@@ -365,6 +367,7 @@ class _HistorialPageState extends State<HistorialPage> {
         backgroundColor: colores[NombreColores.superficie],
         onRefresh: _reintentar,
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(24),
           child: Center(
             child: Column(
@@ -502,112 +505,132 @@ class _HistorialPageState extends State<HistorialPage> {
 
                 SizedBox(height: 24),
 
-                AsyncDataView(
-                  cargando: _cargando,
-                  error: _error,
-                  onReintentar: _reintentar,
-                ),
-
-                if (!_cargando && !_error && _partidas.isEmpty)
-                  EmptyStateView(
-                    mensaje: 'No hay partidas guardadas',
-                    icono: listaIconos[NombreIconos.sinPartidas]!,
-                    color: colores[NombreColores.textoSecundario]!,
-                  ),
-
-                if (!_cargando && !_error && _partidas.isNotEmpty)
-                  Column(
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  child: Column(
+                    key: ValueKey(
+                      _cargando
+                          ? 'cargando'
+                          : _error
+                          ? 'error'
+                          : _partidas.isEmpty
+                          ? 'vacio'
+                          : 'partidas',
+                    ),
                     children: [
-                      Text(
-                        'Total de partidas: ${_partidas.length}',
-                        style: TextStyle(
-                          color: colores[NombreColores.textoPrincipal],
-                        ),
+                      AsyncDataView(
+                        cargando: _cargando,
+                        error: _error,
+                        onReintentar: _reintentar,
                       ),
 
-                      const SizedBox(height: 16),
+                      if (!_cargando && !_error && _partidas.isEmpty)
+                        EmptyStateView(
+                          mensaje: 'No hay partidas guardadas',
+                          icono: listaIconos[NombreIconos.sinPartidas]!,
+                          color: colores[NombreColores.textoSecundario]!,
+                        ),
 
-                      for (final partida in _partidas)
-                        Dismissible(
-                          key: ValueKey(partida.id),
-                          direction: DismissDirection.endToStart,
-
-                          background: Container(
-                            color: colores[NombreColores.estadoError],
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.all(16),
-                            child: Text(
-                              'Eliminar',
+                      if (!_cargando && !_error && _partidas.isNotEmpty)
+                        Column(
+                          children: [
+                            Text(
+                              'Total de partidas: ${_partidas.length}',
                               style: TextStyle(
                                 color: colores[NombreColores.textoPrincipal],
-                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
 
-                          confirmDismiss: (direction) async {
-                            final confirmar = await _confirmarDeslizamiento();
+                            const SizedBox(height: 16),
 
-                            if (!confirmar) {
-                              return false;
-                            }
+                            for (final partida in _partidas)
+                              Dismissible(
+                                key: ValueKey(partida.id),
+                                direction: DismissDirection.endToStart,
 
-                            if (partida.id == null) {
-                              return false;
-                            }
-
-                            try {
-                              await _partidaDao.eliminarPartida(partida.id!);
-
-                              if (!mounted) return false;
-
-                              setState(() {
-                                _partidas.remove(partida);
-                              });
-
-                              _reintentar();
-                              return false;
-                            } catch (e) {
-                              if (!mounted) return false;
-
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text('Error al eliminar'),
-                                  content: Text(
-                                    'No se ha podido eliminar la partida.',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('Aceptar'),
+                                background: Container(
+                                  color: colores[NombreColores.estadoError],
+                                  alignment: Alignment.centerRight,
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                    'Eliminar',
+                                    style: TextStyle(
+                                      color:
+                                          colores[NombreColores.textoPrincipal],
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              );
 
-                              return false;
-                            }
-                          },
+                                confirmDismiss: (direction) async {
+                                  final confirmar =
+                                      await _confirmarDeslizamiento();
 
-                          child: PartidaListItem(
-                            partida: partida,
-                            onPulsar: () {
-                              if (partida.id != null) {
-                                _abrirDetalles(partida.id!);
-                              }
-                            },
-                            onPulsacionLarga: () {
-                              if (partida.id != null) {
-                                _mostrarOpcionesPartida(partida.id!);
-                              }
-                            },
-                          ),
+                                  if (!confirmar) {
+                                    return false;
+                                  }
+
+                                  if (partida.id == null) {
+                                    return false;
+                                  }
+
+                                  try {
+                                    await _partidaDao.eliminarPartida(
+                                      partida.id!,
+                                    );
+
+                                    if (!mounted) return false;
+
+                                    setState(() {
+                                      _partidas.remove(partida);
+                                    });
+
+                                    _reintentar();
+                                    return false;
+                                  } catch (e) {
+                                    if (!mounted) return false;
+
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('Error al eliminar'),
+                                        content: Text(
+                                          'No se ha podido eliminar la partida.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('Aceptar'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+
+                                    return false;
+                                  }
+                                },
+
+                                child: PartidaListItem(
+                                  partida: partida,
+                                  onPulsar: () {
+                                    if (partida.id != null) {
+                                      _abrirDetalles(partida.id!);
+                                    }
+                                  },
+                                  onPulsacionLarga: () {
+                                    if (partida.id != null) {
+                                      _mostrarOpcionesPartida(partida.id!);
+                                    }
+                                  },
+                                ),
+                              ),
+                          ],
                         ),
                     ],
                   ),
+                ),
               ],
             ),
           ),

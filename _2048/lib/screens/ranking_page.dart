@@ -8,6 +8,7 @@ import '../models/partida.dart';
 import '../routes.dart';
 import '../services/preferenciasservice.dart';
 import '../widgets/async_data_view.dart';
+import '../widgets/barra_navegacion.dart';
 import '../widgets/empty_state_view.dart';
 import '../widgets/partida_list_item.dart';
 
@@ -68,10 +69,11 @@ class _RankingPageState extends State<RankingPage> {
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
     );
 
     return Scaffold(
+      bottomNavigationBar: BarraNavegacion(indiceActual: 2),
       appBar: AppBar(
         title: Row(
           children: [

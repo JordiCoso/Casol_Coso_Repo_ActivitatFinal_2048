@@ -162,7 +162,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
     );
 
     return Scaffold(
@@ -180,8 +180,11 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
       ),
 
       body: RefreshIndicator(
+        color: colores[NombreColores.principal],
+        backgroundColor: colores[NombreColores.superficie],
         onRefresh: _actualizarEstadisticas,
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(24),
           child: Center(
             child: Column(
