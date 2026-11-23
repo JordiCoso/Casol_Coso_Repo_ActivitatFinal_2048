@@ -43,6 +43,8 @@ class PreferenciasService {
 
     inicializando.temaOscuro.value = inicializando.obtenerTemaOscuro();
 
+    _preferenciasService = inicializando;
+
     return inicializando;
   }
 

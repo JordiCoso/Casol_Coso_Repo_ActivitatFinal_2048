@@ -1,3 +1,4 @@
+import 'package:_2048/widgets/boardwidget.dart';
 import 'package:flutter/material.dart';
 
 class Juego2048 extends StatelessWidget {
@@ -5,7 +6,20 @@ class Juego2048 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            Text('Puntuacion'),
+            Text('Mejor Puntuacion'),
+            Text('Contador movimientos'),
+            Text('Cronometro'),
+
+            BoardWidget(),
+            Text('Boton de reinicio'),
+          ],
+        ),
+      ),
+    );
   }
 }

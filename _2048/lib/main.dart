@@ -1,14 +1,17 @@
 //import 'package:_2048/routes.dart';
+import 'package:_2048/routes.dart';
 import 'package:_2048/screens/ajustes.dart';
 import 'package:_2048/screens/estadisticas_page.dart';
 import 'package:_2048/screens/historial_page.dart';
 import 'package:_2048/screens/ranking_page.dart';
+
 //import 'package:_2048/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'data/databasehelper.dart';
 import 'models/colores.dart';
+
 //import 'models/usuario.dart';
 import 'services/preferenciasservice.dart';
 
@@ -21,25 +24,11 @@ Future<void> main() async {
   final DatabaseHelper databasehelper = await DatabaseHelper.crear();
 
   //iniciamos la aplicación con el servicio de preferencias.
-  runApp(
-    MyApp(
-      preferenciasService: preferenciasService,
-      databasehelper: databasehelper,
-    ),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  //servicio que utilizamos para recuperar las preferencias.
-  final PreferenciasService _preferenciasService;
-
-  final DatabaseHelper _databasehelper;
-
-  const MyApp({
-    super.key,
-    required this._preferenciasService,
-    required this._databasehelper,
-  });
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -56,9 +45,9 @@ class _MyAppState extends State<MyApp> {
         final Map<String, Color> colores = obtenerEsquemaColoresActual(
           PreferenciasService.instanciaPS.obtenerTemaOscuro(),
         );
-        
-        return MaterialApp(
-        //return MaterialApp.router(
+
+        return MaterialApp.router(
+          //return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: '2048',
 
@@ -113,15 +102,7 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
 
-          home: PantallaAjustes(),
-          /*home: PantallaPrincipal(
-            preferenciasService: widget._preferenciasService,
-            databasehelper: widget._databasehelper,
-            usuario: Usuario(nombre: 'aa', numeroHabitos: 2),
-          ),*/
-          //routerConfig: router,
-
-
+          routerConfig: router,
         );
       },
     );

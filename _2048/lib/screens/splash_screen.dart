@@ -116,10 +116,7 @@ class SplashScreen extends StatelessWidget {
             const Expanded(flex: 2, child: SizedBox()),
             BotonPrincipal(
               texto: 'Comenzar',
-              pulsar: () => context.goNamed(
-                Rutas.principal,
-                extra: PreferenciasService.instanciaPS,
-              ),
+              pulsar: () => context.goNamed(Rutas.login),
             ),
             const Expanded(flex: 2, child: SizedBox()),
           ],
