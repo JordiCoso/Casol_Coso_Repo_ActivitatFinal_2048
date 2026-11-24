@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 class CronometroWidget extends StatefulWidget {
   int tiempoEnSegundos = 0;
 
+  CronometroWidget({super.key, this.tiempoEnSegundos = 0});
+
   @override
   State<StatefulWidget> createState() => _CronometroWidgetState();
 }
@@ -13,6 +15,31 @@ class _CronometroWidgetState extends State<CronometroWidget> {
   Stopwatch stopWatch = Stopwatch();
   late Timer timer;
   String tiempoPasado = '0';
+  int tiempoInicial = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    tiempoInicial = widget.tiempoEnSegundos;
+    tiempoPasado = _formatearTiempo(Duration(seconds: tiempoInicial));
+
+    stopWatch.start();
+
+    timer = Timer.periodic(Duration(milliseconds: 100), (Timer timer) {
+      if (mounted) {
+        setState(() {
+          if (stopWatch.isRunning) {
+            Duration tiempo =
+                Duration(seconds: tiempoInicial) + stopWatch.elapsed;
+
+            tiempoPasado = _formatearTiempo(tiempo);
+            widget.tiempoEnSegundos = tiempo.inSeconds;
+          }
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -23,25 +50,6 @@ class _CronometroWidgetState extends State<CronometroWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (!mounted) {
-      timer.cancel();
-      return Text('Cronometro null');
-    }
-
-    stopWatch.start();
-    // Create a timer that runs a callback every 100 milliseconds to update UI
-    timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) {
-      if(mounted) {
-        setState(() {
-        // Update elapsed time only if the stopwatch is running
-        if (stopWatch.isRunning) {
-          tiempoPasado = _formatearTiempo(stopWatch.elapsed);
-          widget.tiempoEnSegundos = stopWatch.elapsed.inSeconds;
-        }
-      });
-      }
-    });
-
     return Text('Cronometro: $tiempoPasado');
   }
 

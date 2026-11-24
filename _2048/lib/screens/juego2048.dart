@@ -13,7 +13,6 @@ import 'package:_2048/widgets/scorecard.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../data/partida_dao.dart';
 import '../models/cuadrado.dart';
 import '../models/partida_guardada.dart';
 import '../models/tablero.dart';
@@ -93,7 +92,8 @@ class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
     }
   }
 
-  void guardarPartida() {
+  //guardamos la partida actual
+  Future<void> guardarPartida() async {
     PartidaGuardada partida = PartidaGuardada(
       movimientos: movimientos,
       puntuacion: puntuacion,
@@ -102,7 +102,8 @@ class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
       id: 1,
       usuarioId: PreferenciasService.instanciaPS.obtenerUsuarioId()!,
     );
-    PartidaGuardadaDao().guardarPartida(partida);
+
+    await PartidaGuardadaDao().guardarPartida(partida);
   }
 
   @override
