@@ -21,7 +21,9 @@ import '../routes.dart';
 import '../widgets/tilewidget.dart';
 
 class Juego2048 extends StatefulWidget {
-  const Juego2048({super.key});
+  final PartidaGuardada? partidaGuardada;
+
+  const Juego2048({super.key,  this.partidaGuardada});
 
   @override
   State<Juego2048> createState() => _Juego2048State();
