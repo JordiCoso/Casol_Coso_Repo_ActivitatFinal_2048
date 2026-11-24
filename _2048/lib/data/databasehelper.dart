@@ -63,8 +63,9 @@ class DatabaseHelper {
 
     final baseCreada = await openDatabase(
       ruta,
-      version: 1,
-      onUpgrade: (db, oldVersion, newVersion) => migrarBase(db, oldVersion, newVersion),
+      version: 2,
+      onUpgrade: (db, oldVersion, newVersion) =>
+          migrarBase(db, oldVersion, newVersion),
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
@@ -148,6 +149,8 @@ class DatabaseHelper {
   }
 
   Future<void> migrarBase(Database db, int oldVersion, int newVersion) async {
-    await db.execute('ALTER TABLE $tablaUsuarios ADD $columnaUsuariosTelefono TEXT');
+    await db.execute(
+      'ALTER TABLE $tablaUsuarios ADD $columnaUsuariosTelefono TEXT',
+    );
   }
 }
