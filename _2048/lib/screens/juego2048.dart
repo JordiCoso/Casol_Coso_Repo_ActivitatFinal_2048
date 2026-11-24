@@ -23,7 +23,7 @@ import '../widgets/tilewidget.dart';
 class Juego2048 extends StatefulWidget {
   final PartidaGuardada? partidaGuardada;
 
-  const Juego2048({super.key,  this.partidaGuardada});
+  const Juego2048({super.key, this.partidaGuardada});
 
   @override
   State<Juego2048> createState() => _Juego2048State();
@@ -57,7 +57,40 @@ class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    tableroActual = LinkedHashMap.from(tableroUtils.tablero);
+    if (widget.partidaGuardada != null) {
+      PartidaGuardada partida = widget.partidaGuardada!;
+
+      Tablero tableroGuardado = Tablero.fromJson(partida.tablero);
+
+      tableroActual = LinkedHashMap.from(tableroGuardado.tablero);
+
+      puntuacion = partida.puntuacion;
+      movimientos = partida.movimientos;
+
+      //obtenemos la ficha maxima del tablero
+      for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+          Cuadrado cuadradoActual = tableroActual['$i$j']!;
+
+          if (cuadradoActual.valor > fichaMaxima) {
+            fichaMaxima = cuadradoActual.valor;
+          }
+        }
+      }
+    } else {
+      tableroActual = LinkedHashMap.from(tableroUtils.tablero);
+
+      _generarNuevoCuadrado();
+      _generarNuevoCuadrado();
+
+      fichaMaxima = 2;
+    }
+
+    mejorPuntuacion = PreferenciasService.instanciaPS.obtenerMejorPuntuacion();
+
+    if (puntuacion > mejorPuntuacion) {
+      mejorPuntuacion = puntuacion;
+    }
   }
 
   void guardarPartida() {
