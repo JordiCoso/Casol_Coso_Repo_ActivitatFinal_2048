@@ -53,6 +53,7 @@ class PreferenciasService {
   static const String claveDatoTema = 'temaOscuro';
   static const String claveUltimoJugador = 'ultimoJugador';
   static const String claveMejorPuntuacion = 'mejorPuntuacion';
+  static const String claveUsuarioId = 'usuarioId';
 
   //guardamos el modo del tema
   void guardarModoTema(ThemeMode modo) {
@@ -114,6 +115,14 @@ class PreferenciasService {
 
   Future<void> borrarTodosLosDatos() async {
     await _preferencias.clear();
+  }
+
+  void guardarUsuarioId(int id) {
+    _preferencias.setInt(claveUsuarioId, id);
+  }
+
+  int? obtenerUsuarioId() {
+    return _preferencias.getInt(claveUsuarioId);
   }
 
   /// Guarda el modo oscuro y avisa cuando cambia.

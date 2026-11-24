@@ -1,5 +1,6 @@
 import 'package:_2048/routes.dart';
 import 'package:_2048/widgets/boton_principal.dart';
+import 'package:cryptography/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -47,6 +48,14 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               '${modo ? 'Price' : 'Meowscarada'}\'s version',
               style: Theme.of(context).textTheme.titleLarge,
             ),
+            const Expanded(flex: 2,child: const SizedBox()),
+            Image(
+              image: modo
+                  ? const AssetImage('images/2048_Icon_Dark.png')
+                  : const AssetImage('images/2048_Icon_Light.png'),
+              height: 250,
+              width: 250,
+            ),
             const Expanded(flex: 3, child: const SizedBox()),
             BotonPrincipal(
               texto: 'Jugar',
@@ -72,7 +81,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               texto: 'Estadisticas',
               pulsar: () => context.goNamed(Rutas.estadisticas),
             ),
-            Expanded(flex: 2, child: const SizedBox()),
+            Expanded(flex: 4, child: const SizedBox()),
           ],
         ),
       ),

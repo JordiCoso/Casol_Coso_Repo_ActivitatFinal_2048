@@ -1,48 +1,45 @@
 import 'package:_2048/models/colores.dart';
 import 'package:_2048/services/preferenciasservice.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 
 class Cuadrado {
   String posicion;
+  late int x = int.parse(posicion[1]);
+  late int y = int.parse(posicion[0]);
   bool combinado = false;
-  final int valor;
+  bool nuevo;
+  late final int valor;
 
-  String get x {
+  String get keyX {
     return posicion[1];
   }
 
-  set x(String x) {
+  set keyX(String keyX) {
     String y = posicion[0];
-    posicion = '$y$x';
+    posicion = '$y$keyX';
+    x = int.parse(keyX);
   }
 
-  String get y {
+  String get keyY {
     return posicion[0];
   }
 
-  set y(String y) {
+  set keyY(String keyY) {
     String x = posicion[1];
-    posicion = '$y$x';
+    posicion = '$keyY$x';
+    y = int.parse(keyY);
   }
 
-  Cuadrado.vacio() : valor = 0, posicion = '00';
+  Cuadrado.vacio() : valor = 0, posicion = '00', nuevo = false;
 
-  Cuadrado({required this.posicion, required this.valor});
+  Cuadrado({required this.posicion, required this.valor, this.nuevo = false});
 
-  void mover(String posicionNueva) {
-    posicion = posicionNueva;
-  }
+  Cuadrado.fromMap(Map<String, Object?> mapa)
+    : this.posicion = mapa['posicion'] as String,
+      valor = mapa['valor'] as int,
+      this.nuevo = false;
 
-  Container toContainer(BuildContext context) {
-    final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
-    );
-    return Container(
-      color: colores['$valor'],
-      width: 80,
-      height: 80,
-      child: Center(child: Text('$valor')),
-    );
+  Map<String, Object?> toMap() {
+    return {'posicion': posicion, 'valor': valor};
   }
 }
