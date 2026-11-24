@@ -4,25 +4,29 @@ import 'package:flutter/material.dart';
 
 class Cuadrado {
   String posicion;
+  late int x = int.parse(posicion[1]);
+  late int y = int.parse(posicion[0]);
   bool combinado = false;
   final int valor;
 
-  String get x {
+  String get keyX {
     return posicion[1];
   }
 
-  set x(String x) {
+  set keyX(String keyX) {
     String y = posicion[0];
-    posicion = '$y$x';
+    posicion = '$y$keyX';
+    x = int.parse(keyX);
   }
 
-  String get y {
+  String get keyY {
     return posicion[0];
   }
 
-  set y(String y) {
+  set keyY(String keyY) {
     String x = posicion[1];
-    posicion = '$y$x';
+    posicion = '$keyY$x';
+    y = int.parse(keyY);
   }
 
   Cuadrado.vacio() : valor = 0, posicion = '00';
@@ -33,15 +37,40 @@ class Cuadrado {
     posicion = posicionNueva;
   }
 
-  Container toContainer() {
-    final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
-    );
+  Container toContainer(BuildContext context) {
+    final bool temaOscuro = PreferenciasService.instanciaPS.obtenerTemaOscuro();
+    final colorCuadrado =
+        obtenerEsquemaColoresActual(temaOscuro)['$valor'] ??
+        obtenerEsquemaColoresActual(temaOscuro)[NombreColores.bordes];
+    final numeroClaro = obtenerEsquemaColoresActual(
+      true,
+    )[NombreColores.textoPrincipal]!;
+    final numeroOscuro = obtenerEsquemaColoresActual(
+      false,
+    )[NombreColores.textoPrincipal]!;
+
+    final Color colorTexto = (temaOscuro)
+        ? (valor == 2)
+              ? numeroClaro
+              : numeroOscuro
+        : (valor == 2)
+        ? numeroOscuro
+        : numeroClaro;
     return Container(
-      color: colores['$valor'],
+      decoration: BoxDecoration(
+        color: colorCuadrado,
+        borderRadius: BorderRadius.circular(12),
+      ),
+
       width: 80,
       height: 80,
-      child: Center(child: Text('$valor')),
+      child: Center(
+        child: Text(
+          '${(valor != 0) ? valor : ''}',
+          style: Theme.of(context).textTheme.titleMedium
+              ?.copyWith(color: colorTexto),
+        ),
+      ),
     );
   }
 }

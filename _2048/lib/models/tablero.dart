@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'cuadrado.dart';
 
 class Tablero {
@@ -17,14 +20,21 @@ class Tablero {
     tablero = tableroVacio;
   }
 
-  Tablero.fromMap(Map<String, Object?> json) {
-    tamanoTablero = json['tamanoTablero'] as int? ?? 4;
+  Tablero.fromJson(String json) {
+    final Map<String, Object?> jsonMap = jsonDecode(json);
+
+    tamanoTablero = jsonMap['tamanoTablero'] as int? ?? 4;
 
     loopLineasYColumnas(
       tamanoTablero,
       ({required columna, required linea}) =>
-          tablero['$linea$columna'] = json['$linea$columna'] as Cuadrado,
+          tablero['$linea$columna'] = jsonMap['$linea$columna'] as Cuadrado,
     );
+  }
+
+  String toJson(LinkedHashMap<String, Cuadrado> tableroGuardar) {
+    tablero = tableroGuardar;
+    return jsonEncode(tablero);
   }
 
   /// Para no repetir codigo de pasar por todas las linea/columna,

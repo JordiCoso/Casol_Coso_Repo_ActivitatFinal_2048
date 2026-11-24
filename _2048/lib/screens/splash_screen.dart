@@ -61,7 +61,7 @@ class SplashScreen extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                fixedSize: Size(140, 50),
+                                fixedSize: Size(130, 50),
                                 padding: EdgeInsets.all(0),
                               ),
                               child: Text(
@@ -82,7 +82,7 @@ class SplashScreen extends StatelessWidget {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                fixedSize: Size(140, 50),
+                                fixedSize: Size(130, 50),
                                 padding: EdgeInsets.all(0),
                               ),
                               child: Text(
