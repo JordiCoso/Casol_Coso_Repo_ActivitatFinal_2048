@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
+import '../models/colores.dart';
+
 class PreferenciasService {
   /// La instancia unica de preferenciasService;
   static PreferenciasService? _preferenciasService;
@@ -41,7 +43,7 @@ class PreferenciasService {
 
     inicializando._preferencias = await SharedPreferences.getInstance();
 
-    inicializando.temaOscuro.value = inicializando.obtenerTemaOscuro();
+    inicializando.modoTema.value = inicializando.leerModoTema();
 
     _preferenciasService = inicializando;
 
@@ -53,15 +55,38 @@ class PreferenciasService {
   static const String claveMejorPuntuacion = 'mejorPuntuacion';
   static const String claveUsuarioId = 'usuarioId';
 
-  void guardarTemaOscuro(bool nuevoTema) {
-    _preferencias.setBool(claveDatoTema, nuevoTema);
+  //guardamos el modo del tema
+  void guardarModoTema(ThemeMode modo) {
+    _preferencias.setString(claveDatoTema, modo.name);
 
-    // Se avisa a las pantallas de que se ha cambiado el tema.
-    temaOscuro.value = nuevoTema;
+    modoTema.value = modo;
   }
 
-  bool obtenerTemaOscuro() {
-    return _preferencias.getBool(claveDatoTema) ?? false;
+  //leemos el modo del tema
+  ThemeMode leerModoTema() {
+    final String? modoGuardado = _preferencias.getString(claveDatoTema);
+
+    if (modoGuardado == null) {
+      return ThemeMode.system;
+    }
+
+    if (modoGuardado == ThemeMode.dark.name) {
+      return ThemeMode.dark;
+    }
+
+    if (modoGuardado == ThemeMode.light.name) {
+      return ThemeMode.light;
+    }
+
+    return ThemeMode.system;
+  }
+
+  //comprobamos que paleta esta utilizando la aplicacion
+  bool obtenerTemaOscuro(BuildContext context) {
+    final coloresOscuros = obtenerEsquemaColoresActual(true);
+
+    return Theme.of(context).colorScheme.primary ==
+        coloresOscuros[NombreColores.principal];
   }
 
   //guardamos el nombre del ultimo jugador
@@ -101,5 +126,7 @@ class PreferenciasService {
   }
 
   /// Guarda el modo oscuro y avisa cuando cambia.
-  ValueNotifier<bool> temaOscuro = ValueNotifier<bool>(false);
+  ValueNotifier<ThemeMode> modoTema = ValueNotifier<ThemeMode>(
+    ThemeMode.system,
+  );
 }

@@ -153,7 +153,7 @@ class _RegistroPageState extends State<RegistroPage> {
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
     );
     return Scaffold(
       appBar: AppBar(title: Text('Registro')),

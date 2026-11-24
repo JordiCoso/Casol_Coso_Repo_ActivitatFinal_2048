@@ -4,6 +4,7 @@ import 'package:_2048/models/iconos.dart';
 import 'package:_2048/services/preferenciasservice.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/barra_navegacion.dart';
 import '../widgets/confirm_dialog.dart';
 
 class PantallaAjustes extends StatefulWidget {
@@ -18,8 +19,8 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
 
   bool _eliminando = false;
 
-  void _cambiarTemaOscuro(bool nuevoTema) {
-    PreferenciasService.instanciaPS.guardarTemaOscuro(nuevoTema);
+  void _cambiarModoTema(ThemeMode nuevoTema) {
+    PreferenciasService.instanciaPS.guardarModoTema(nuevoTema);
 
     setState(() {});
   }
@@ -103,10 +104,20 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
     );
     return Scaffold(
-      appBar: AppBar(title: Text('Ajustes')),
+      bottomNavigationBar: BarraNavegacion(indiceActual: 3),
+      appBar: AppBar(
+        title: Text(
+          'Ajustes',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: colores[NombreColores.textoPrincipal],
+          ),
+        ),
+      ),
 
       body: SingleChildScrollView(
         padding: EdgeInsets.all(24),
@@ -151,11 +162,50 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
 
                   Divider(),
 
-                  SwitchListTile(
-                    title: Text('Modo oscuro'),
-                    subtitle: Text('Cambia al modo claro o al oscuro'),
-                    value: PreferenciasService.instanciaPS.obtenerTemaOscuro(),
-                    onChanged: _cambiarTemaOscuro,
+                  //seleccionamos entre los tres modos del tema
+                  RadioGroup<ThemeMode>(
+                    groupValue: PreferenciasService.instanciaPS.leerModoTema(),
+                    onChanged: (ThemeMode? nuevoModo) {
+                      if (nuevoModo != null) {
+                        _cambiarModoTema(nuevoModo);
+                      }
+                    },
+                    child: Column(
+                      children: [
+                        RadioListTile<ThemeMode>(
+                          title: Text(
+                            'Modo claro',
+                            style: TextStyle(
+                              color: colores[NombreColores.textoPrincipal],
+                            ),
+                          ),
+                          value: ThemeMode.light,
+                          activeColor: colores[NombreColores.principal],
+                        ),
+
+                        RadioListTile<ThemeMode>(
+                          title: Text(
+                            'Modo oscuro',
+                            style: TextStyle(
+                              color: colores[NombreColores.textoPrincipal],
+                            ),
+                          ),
+                          value: ThemeMode.dark,
+                          activeColor: colores[NombreColores.principal],
+                        ),
+
+                        RadioListTile<ThemeMode>(
+                          title: Text(
+                            'Tema del sistema',
+                            style: TextStyle(
+                              color: colores[NombreColores.textoPrincipal],
+                            ),
+                          ),
+                          value: ThemeMode.system,
+                          activeColor: colores[NombreColores.principal],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -195,6 +245,7 @@ class _PantallaAjustesState extends State<PantallaAjustes> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: colores[NombreColores.textoPrincipal],
                         ),
                       ),
                     ],

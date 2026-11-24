@@ -9,6 +9,7 @@ import '../data/usuario_dao.dart';
 import '../models/partida.dart';
 import '../routes.dart';
 import '../widgets/async_data_view.dart';
+import '../widgets/barra_navegacion.dart';
 import '../widgets/confirm_dialog.dart';
 import '../widgets/empty_state_view.dart';
 import '../widgets/partida_list_item.dart';
@@ -82,7 +83,21 @@ class _HistorialPageState extends State<HistorialPage> {
     });
 
     try {
-      final resultado = await _partidaDao.obtenerPartidasUsuario(nombreUsuario);
+      //buscamos el usuario mediante su nombre
+      final usuario = await _usuarioDao.obtenerUsuarioPorNombre(nombreUsuario);
+
+      if (usuario == null) {
+        if (!mounted) return;
+
+        setState(() {
+          _partidas = [];
+          _cargando = false;
+        });
+
+        return;
+      }
+
+      final resultado = await _partidaDao.obtenerPartidasUsuario(usuario.id!);
 
       if (!mounted) return;
 
@@ -182,6 +197,12 @@ class _HistorialPageState extends State<HistorialPage> {
         usuario.id!,
         fichaMaxima,
       );
+      if (!mounted) return;
+
+      setState(() {
+        _partidas = resultado;
+        _cargando = false;
+      });
     } catch (e) {
       if (!mounted) return;
 
@@ -326,33 +347,75 @@ class _HistorialPageState extends State<HistorialPage> {
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Historial')),
+      bottomNavigationBar: BarraNavegacion(indiceActual: 1),
+      appBar: AppBar(
+        title: Text(
+          'Historial',
+          style: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: colores[NombreColores.textoPrincipal],
+          ),
+        ),
+      ),
       body: RefreshIndicator(
         color: colores[NombreColores.principal],
         backgroundColor: colores[NombreColores.superficie],
         onRefresh: _reintentar,
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(24),
           child: Center(
             child: Column(
               children: [
                 TextField(
                   controller: _usuarioController,
+                  style: TextStyle(
+                    color: colores[NombreColores.textoPrincipal],
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Buscar por usuario',
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(
+                      color: colores[NombreColores.textoSecundario],
+                    ),
+                    filled: true,
+                    fillColor: colores[NombreColores.superficie],
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: colores[NombreColores.bordes]!,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: colores[NombreColores.principal]!,
+                        width: 2,
+                      ),
+                    ),
                   ),
                 ),
 
                 SizedBox(height: 12),
 
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colores[NombreColores.principal],
+                    fixedSize: Size(300, 50),
+                    padding: EdgeInsets.all(0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: _filtrarPorUsuario,
-                  child: Text('Buscar'),
+                  child: Text(
+                    'Buscar',
+                    style: TextStyle(color: colores[NombreColores.fondo]),
+                  ),
                 ),
 
                 SizedBox(height: 12),
@@ -360,136 +423,214 @@ class _HistorialPageState extends State<HistorialPage> {
                 TextField(
                   controller: _fichaController,
                   keyboardType: TextInputType.number,
+                  style: TextStyle(
+                    color: colores[NombreColores.textoPrincipal],
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Buscar por ficha',
-                    border: OutlineInputBorder(),
+                    labelStyle: TextStyle(
+                      color: colores[NombreColores.textoSecundario],
+                    ),
+                    filled: true,
+                    fillColor: colores[NombreColores.superficie],
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: colores[NombreColores.bordes]!,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: colores[NombreColores.principal]!,
+                        width: 2,
+                      ),
+                    ),
                   ),
                 ),
 
                 SizedBox(height: 12),
 
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colores[NombreColores.principal],
+                    fixedSize: Size(300, 50),
+                    padding: EdgeInsets.all(0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: _filtrarPorFicha,
-                  child: Text('Filtrar por ficha'),
+                  child: Text(
+                    'Filtrar por ficha',
+                    style: TextStyle(color: colores[NombreColores.fondo]),
+                  ),
                 ),
 
                 SizedBox(height: 12),
 
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colores[NombreColores.principal],
+                    fixedSize: Size(300, 50),
+                    padding: EdgeInsets.all(0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: _filtrarAmbos,
-                  child: Text('Aplicar ambos filtros'),
+                  child: Text(
+                    'Aplicar ambos filtros',
+                    style: TextStyle(color: colores[NombreColores.fondo]),
+                  ),
                 ),
 
                 SizedBox(height: 24),
 
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colores[NombreColores.principal],
+                    fixedSize: Size(300, 50),
+                    padding: EdgeInsets.all(0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: _cargarPartidas,
-                  child: Text('Actualizar historial'),
+                  child: Text(
+                    'Actualizar historial',
+                    style: TextStyle(color: colores[NombreColores.fondo]),
+                  ),
                 ),
 
                 SizedBox(height: 24),
 
-                AsyncDataView(
-                  cargando: _cargando,
-                  error: _error,
-                  onReintentar: _reintentar,
-                ),
-
-                if (!_cargando && !_error && _partidas.isEmpty)
-                  EmptyStateView(
-                    mensaje: 'No hay partidas guardadas',
-                    icono: listaIconos[NombreIconos.sinPartidas]!,
-                    color: colores[NombreColores.textoSecundario]!,
-                  ),
-
-                if (!_cargando && !_error && _partidas.isNotEmpty)
-                  Column(
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 300),
+                  child: Column(
+                    key: ValueKey(
+                      _cargando
+                          ? 'cargando'
+                          : _error
+                          ? 'error'
+                          : _partidas.isEmpty
+                          ? 'vacio'
+                          : 'partidas',
+                    ),
                     children: [
-                      Text('Total de partidas: ${_partidas.length}'),
+                      AsyncDataView(
+                        cargando: _cargando,
+                        error: _error,
+                        onReintentar: _reintentar,
+                      ),
 
-                      const SizedBox(height: 16),
+                      if (!_cargando && !_error && _partidas.isEmpty)
+                        EmptyStateView(
+                          mensaje: 'No hay partidas guardadas',
+                          icono: listaIconos[NombreIconos.sinPartidas]!,
+                          color: colores[NombreColores.textoSecundario]!,
+                        ),
 
-                      for (final partida in _partidas)
-                        Dismissible(
-                          key: ValueKey(partida.id),
-                          direction: DismissDirection.endToStart,
-
-                          background: Container(
-                            color: colores[NombreColores.estadoError],
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.all(16),
-                            child: Text(
-                              'Eliminar',
+                      if (!_cargando && !_error && _partidas.isNotEmpty)
+                        Column(
+                          children: [
+                            Text(
+                              'Total de partidas: ${_partidas.length}',
                               style: TextStyle(
                                 color: colores[NombreColores.textoPrincipal],
-                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
 
-                          confirmDismiss: (direction) async {
-                            final confirmar = await _confirmarDeslizamiento();
+                            const SizedBox(height: 16),
 
-                            if (!confirmar) {
-                              return false;
-                            }
+                            for (final partida in _partidas)
+                              Dismissible(
+                                key: ValueKey(partida.id),
+                                direction: DismissDirection.endToStart,
 
-                            if (partida.id == null) {
-                              return false;
-                            }
-
-                            try {
-                              await _partidaDao.eliminarPartida(partida.id!);
-
-                              if (!mounted) return false;
-
-                              setState(() {
-                                _partidas.remove(partida);
-                              });
-
-                              _reintentar();
-                              return false;
-                            } catch (e) {
-                              if (!mounted) return false;
-
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: Text('Error al eliminar'),
-                                  content: Text(
-                                    'No se ha podido eliminar la partida.',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('Aceptar'),
+                                background: Container(
+                                  color: colores[NombreColores.estadoError],
+                                  alignment: Alignment.centerRight,
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                    'Eliminar',
+                                    style: TextStyle(
+                                      color:
+                                          colores[NombreColores.textoPrincipal],
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              );
 
-                              return false;
-                            }
-                          },
+                                confirmDismiss: (direction) async {
+                                  final confirmar =
+                                      await _confirmarDeslizamiento();
 
-                          child: PartidaListItem(
-                            partida: partida,
-                            onPulsar: () {
-                              if (partida.id != null) {
-                                _abrirDetalles(partida.id!);
-                              }
-                            },
-                            onPulsacionLarga: () {
-                              if (partida.id != null) {
-                                _mostrarOpcionesPartida(partida.id!);
-                              }
-                            },
-                          ),
+                                  if (!confirmar) {
+                                    return false;
+                                  }
+
+                                  if (partida.id == null) {
+                                    return false;
+                                  }
+
+                                  try {
+                                    await _partidaDao.eliminarPartida(
+                                      partida.id!,
+                                    );
+
+                                    if (!mounted) return false;
+
+                                    setState(() {
+                                      _partidas.remove(partida);
+                                    });
+
+                                    _reintentar();
+                                    return false;
+                                  } catch (e) {
+                                    if (!mounted) return false;
+
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('Error al eliminar'),
+                                        content: Text(
+                                          'No se ha podido eliminar la partida.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('Aceptar'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+
+                                    return false;
+                                  }
+                                },
+
+                                child: PartidaListItem(
+                                  partida: partida,
+                                  onPulsar: () {
+                                    if (partida.id != null) {
+                                      _abrirDetalles(partida.id!);
+                                    }
+                                  },
+                                  onPulsacionLarga: () {
+                                    if (partida.id != null) {
+                                      _mostrarOpcionesPartida(partida.id!);
+                                    }
+                                  },
+                                ),
+                              ),
+                          ],
                         ),
                     ],
                   ),
+                ),
               ],
             ),
           ),

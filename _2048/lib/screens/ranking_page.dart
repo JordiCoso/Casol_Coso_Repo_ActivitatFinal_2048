@@ -8,6 +8,7 @@ import '../models/partida.dart';
 import '../routes.dart';
 import '../services/preferenciasservice.dart';
 import '../widgets/async_data_view.dart';
+import '../widgets/barra_navegacion.dart';
 import '../widgets/empty_state_view.dart';
 import '../widgets/partida_list_item.dart';
 
@@ -68,10 +69,11 @@ class _RankingPageState extends State<RankingPage> {
   @override
   Widget build(BuildContext context) {
     final colores = obtenerEsquemaColoresActual(
-      PreferenciasService.instanciaPS.obtenerTemaOscuro(),
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
     );
 
     return Scaffold(
+      bottomNavigationBar: BarraNavegacion(indiceActual: 2),
       appBar: AppBar(
         title: Row(
           children: [
@@ -80,7 +82,14 @@ class _RankingPageState extends State<RankingPage> {
               color: colores[NombreColores.principal],
             ),
             const SizedBox(width: 8),
-            const Text('Ranking'),
+            Text(
+              'Ranking',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: colores[NombreColores.textoPrincipal],
+              ),
+            ),
           ],
         ),
       ),
@@ -94,9 +103,9 @@ class _RankingPageState extends State<RankingPage> {
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              const Text(
+              Text(
                 'Las 10 mejores partidas',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colores[NombreColores.textoPrincipal]),
               ),
 
               AsyncDataView(

@@ -1,3 +1,4 @@
+import 'package:_2048/screens/como_jugar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,6 +26,7 @@ class Rutas {
   static const String ranking = 'ranking';
   static const String estadisticas = 'estadisticas';
   static const String juego2048 = 'juego2048';
+  static const String comoJugar = 'comoJugar';
 }
 
 final router = GoRouter(
@@ -83,6 +85,11 @@ final router = GoRouter(
                   path: Rutas.juego2048,
                   name: Rutas.juego2048,
                   builder: (context, state) => Juego2048(),
+                ),
+                GoRoute(
+                  path: Rutas.comoJugar,
+                  name: Rutas.comoJugar,
+                  builder: (context, state) => ComoJugar(),
                 ),
               ],
             ),

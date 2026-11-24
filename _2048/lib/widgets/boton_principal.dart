@@ -12,7 +12,7 @@ class BotonPrincipal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool temaOscuro = PreferenciasService.instanciaPS.obtenerTemaOscuro();
+    final bool temaOscuro = PreferenciasService.instanciaPS.obtenerTemaOscuro(context);
 
     final colores = obtenerEsquemaColoresActual(temaOscuro);
 
