@@ -4,9 +4,7 @@ class NombreIconos {
   const NombreIconos._nollamar();
 
   static const String inicio = 'Inicio';
-  static const String flechaPequenaDerecha = 'Flecha';
   static const String reloj = 'Reloj';
-  static const String check = 'Check';
   static const String ajustes = 'Ajustes';
   static const String puntuacionObtenida = 'Puntuación obtenida';
   static const String fichaMaxima = 'Ficha máxima';
@@ -23,13 +21,15 @@ class NombreIconos {
   static const String historial = 'Historial';
   static const String comoJugar = 'Como jugar';
   static const String deslizar = 'Deslizar';
+  static const String flechaArriba = 'Flecha arriba';
+  static const String flechaAbjo = 'Flecha abajo';
+  static const String flechaDerecha = 'Flecha derecha';
+  static const String flechaIzquierda = 'Flecha izquierda';
 }
 
 const Map<String, IconData> listaIconos = {
   NombreIconos.inicio: Icons.cottage_outlined,
-  NombreIconos.flechaPequenaDerecha: Icons.chevron_right,
   NombreIconos.reloj: Icons.schedule_outlined,
-  NombreIconos.check: Icons.check,
   NombreIconos.ajustes: Icons.settings_outlined,
   NombreIconos.puntuacionObtenida: Icons.star_outline,
   NombreIconos.fichaMaxima: Icons.grid_view_outlined,
@@ -46,4 +46,8 @@ const Map<String, IconData> listaIconos = {
   NombreIconos.historial: Icons.history,
   NombreIconos.comoJugar: Icons.help_outline,
   NombreIconos.deslizar: Icons.swipe_outlined,
+  NombreIconos.flechaArriba: Icons.arrow_upward_outlined,
+  NombreIconos.flechaAbjo: Icons.arrow_downward_outlined,
+  NombreIconos.flechaDerecha: Icons.arrow_forward_outlined,
+  NombreIconos.flechaIzquierda: Icons.arrow_back_outlined,
 };

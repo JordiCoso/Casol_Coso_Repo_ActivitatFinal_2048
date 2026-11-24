@@ -7,6 +7,8 @@ class ConfirmDialog extends StatelessWidget {
   final String textoCancelar;
   final VoidCallback onConfirmar;
   final VoidCallback onCancelar;
+  final String? textoAdicional;
+  final VoidCallback? onAdicional;
 
   const ConfirmDialog({
     super.key,
@@ -16,6 +18,8 @@ class ConfirmDialog extends StatelessWidget {
     required this.textoCancelar,
     required this.onConfirmar,
     required this.onCancelar,
+    this.textoAdicional,
+    this.onAdicional,
   });
 
   @override
@@ -25,6 +29,8 @@ class ConfirmDialog extends StatelessWidget {
       content: Text(mensaje),
       actions: [
         TextButton(onPressed: onCancelar, child: Text(textoCancelar)),
+        if (textoAdicional != null && onAdicional != null)
+          TextButton(onPressed: onAdicional, child: Text(textoAdicional!)),
         TextButton(onPressed: onConfirmar, child: Text(textoConfirmar)),
       ],
     );

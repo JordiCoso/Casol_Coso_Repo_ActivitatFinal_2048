@@ -15,7 +15,16 @@ class AsyncDataView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (cargando) {
-      return const Center(child: Text('Cargando datos...'));
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Cargando datos...'),
+          ],
+        ),
+      );
     }
 
     if (error) {

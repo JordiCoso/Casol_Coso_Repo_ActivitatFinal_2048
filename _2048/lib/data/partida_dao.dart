@@ -307,8 +307,8 @@ class PartidaDao {
 
       await txn.delete(
         DatabaseHelper.tablaGuardado,
-        where: '${DatabaseHelper.columnaGuardadoId} = ?',
-        whereArgs: [1],
+        where: 'id = ? AND usuario_id = ?',
+        whereArgs: [1, partida.usuarioId],
       );
     });
   }
