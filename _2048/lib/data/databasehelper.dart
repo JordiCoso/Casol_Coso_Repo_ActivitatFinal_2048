@@ -64,6 +64,7 @@ class DatabaseHelper {
     final baseCreada = await openDatabase(
       ruta,
       version: 1,
+      onUpgrade: (db, oldVersion, newVersion) => migrarBase(db, oldVersion, newVersion),
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
@@ -82,6 +83,8 @@ class DatabaseHelper {
   static const columnaUsuariosFecharegistro = 'fecha_registro';
   static const columnaUsuariosEmail = 'email';
   static const columnaUsuariosContrasena = 'contrasena';
+
+  static const columnaUsuariosTelefono = 'telefono'; // Para la migracion
 
   static const tablaPartidas = 'partidas';
 
@@ -142,5 +145,9 @@ class DatabaseHelper {
     );
 
     await packDeInstrucciones.commit();
+  }
+
+  Future<void> migrarBase(Database db, int oldVersion, int newVersion) async {
+    await db.execute('ALTER TABLE $tablaUsuarios ADD $columnaUsuariosTelefono TEXT');
   }
 }

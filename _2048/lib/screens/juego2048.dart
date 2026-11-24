@@ -4,8 +4,12 @@ import 'dart:math';
 
 import 'package:_2048/data/partida_guardada_dao.dart';
 import 'package:_2048/models/colores.dart';
+import 'package:_2048/models/iconos.dart';
 import 'package:_2048/services/preferenciasservice.dart';
 import 'package:_2048/widgets/boardwidget.dart';
+import 'package:_2048/widgets/boton_esquina.dart';
+import 'package:_2048/widgets/cronometroWidget.dart';
+import 'package:_2048/widgets/scorecard.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,6 +18,7 @@ import '../models/cuadrado.dart';
 import '../models/partida_guardada.dart';
 import '../models/tablero.dart';
 import '../routes.dart';
+import '../widgets/tilewidget.dart';
 
 class Juego2048 extends StatefulWidget {
   const Juego2048({super.key});
@@ -23,52 +28,53 @@ class Juego2048 extends StatefulWidget {
 }
 
 class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
-  final colores = obtenerEsquemaColoresActual(
-    PreferenciasService.instanciaPS.obtenerTemaOscuro(),
-  );
+  double escala = 1;
+  int activado = 0;
+  late CronometroWidget cronometro;
 
-  final stopWatch = Stopwatch();
-  late final Timer timer;
-  String tiempoPasado = '0';
+  void funcEscalar() {
+    if (activado % 3 < 2) {
+      setState(() => escala = escala == 1 ? 1.3 : 1);
+    }
+    activado++;
+  }
 
-  List<Container> gridVisual = [];
+  late Map<String, Color> colores;
+
+  List<TileWidget> gridVisual = [];
   LinkedHashMap<String, Cuadrado> tableroActual = LinkedHashMap();
   final Tablero tableroUtils = Tablero();
 
   int puntuacion = 0;
   int mejorPuntuacion = 0;
   int movimientos = 0;
+  int fichaMaxima = 0;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    stopWatch.start();
-    // Create a timer that runs a callback every 100 milliseconds to update UI
-    timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) {
-      setState(() {
-        // Update elapsed time only if the stopwatch is running
-        if (stopWatch.isRunning) {
-          tiempoPasado = _formatearTiempo(stopWatch.elapsed);
-        }
-      });
-    });
 
     tableroActual = LinkedHashMap.from(tableroUtils.tablero);
+  }
+
+  void guardarPartida() {
+    PartidaGuardada partida = PartidaGuardada(
+      movimientos: movimientos,
+      puntuacion: puntuacion,
+      segundosTranscurridos: cronometro.tiempoEnSegundos,
+      tablero: tableroUtils.toJson(tableroActual),
+      id: 1,
+      usuarioId: PreferenciasService.instanciaPS.obtenerUsuarioId()!,
+    );
+    PartidaGuardadaDao().guardarPartida(partida);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.inactive) {
-      PartidaGuardada partida = PartidaGuardada(
-        movimientos: movimientos,
-        puntuacion: puntuacion,
-        segundosTranscurridos: stopWatch.elapsed.inSeconds,
-        tablero: tableroUtils.toJson(tableroActual),
-        id: 1,
-        usuarioId: PreferenciasService.instanciaPS.obtenerUsuarioId()!,
-      );
-      PartidaGuardadaDao().guardarPartida(partida);
+      guardarPartida();
+      print('GUARDADA');
     }
   }
 
@@ -80,25 +86,57 @@ class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    colores = obtenerEsquemaColoresActual(
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
+    );
     gridVisual.clear();
     tableroActual.forEach(
-      (key, value) => gridVisual.add(value.toContainer(context)),
+      (key, value) => gridVisual.add(
+        TileWidget(
+          valor: value.valor,
+          escala: escala,
+          funcEscalar: funcEscalar,
+          nuevo: value.nuevo,
+        ),
+      ),
     );
 
     return Scaffold(
       body: Center(
         child: Column(
           children: [
-            Text('Puntuacion: $puntuacion'),
-            Text('Mejor Puntuacion: $mejorPuntuacion'),
-            Text('Contador movimientos: $movimientos'),
-            Text('Cronometro: $tiempoPasado'),
+            PopScope<Object?>(
+              canPop: false,
+              onPopInvokedWithResult: (bool didPop, Object? result) async {
+                if (didPop) {
+                  if (result as bool) {
+                    guardarPartida();
+                  }
+                  return;
+                }
+              },
+              child: BotonEsquina(
+                pulsar: () async {
+                  final bool? shouldPop = await _showBackDialog();
+                  if (shouldPop != null) Navigator.pop(context, shouldPop);
+                },
+                texto: 'Volver',
+                icono: listaIconos[NombreIconos.inicio]!,
+              ),
+            ),
 
+            Expanded(child: const SizedBox()),
+            Scorecard(etiqueta: 'Puntuacion', valor: puntuacion),
+            Scorecard(etiqueta: 'Mejor Puntuacion', valor: mejorPuntuacion),
+            Text('Contador movimientos: $movimientos'),
+            cronometro = CronometroWidget(),
+            Expanded(child: const SizedBox()),
             BoardWidget(
               gridVisual: gridVisual,
               onHorizontalDragEnd: onHorizontalDragEnd,
               onVerticalDragEnd: onVerticalDragEnd,
             ),
+            Expanded(child: const SizedBox()),
             ElevatedButton(
               onPressed: () => context.pushReplacementNamed(Rutas.juego2048),
               style: ElevatedButton.styleFrom(
@@ -119,30 +157,29 @@ class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
                 textAlign: TextAlign.center,
               ),
             ),
+            Expanded(child: const SizedBox()),
           ],
         ),
       ),
     );
   }
 
-  String _formatearTiempo(Duration tiempo) {
-    return '${tiempo.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(tiempo.inSeconds.remainder(60)).toString().padLeft(2, '0')}.${(tiempo.inMilliseconds % 1000 ~/ 100).toString()}';
-  }
-
   void onHorizontalDragEnd(DragEndDetails a) {
     final x = a.primaryVelocity;
     if (x != null) {
       movimientos++;
-      if (x > 0) {
-        print('DERECHA');
+      if (x > 1000) {
+        print('DERECHA $x');
         _DeslizarDerecha();
         _generarNuevoCuadrado();
         _ActualizarPosiciones();
-      } else if (x < 0) {
-        print('IZQUIERDA');
+        funcEscalar();
+      } else if (x < -1000) {
+        print('IZQUIERDA $x');
         _DeslizarIzquierda();
         _generarNuevoCuadrado();
         _ActualizarPosiciones();
+        funcEscalar();
       }
     }
   }
@@ -152,16 +189,18 @@ class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
 
     if (y != null) {
       movimientos++;
-      if (y > 0) {
-        print('ABAJO');
+      if (y > 1000) {
+        print('ABAJO $y');
         _DeslizarAbajo();
         _generarNuevoCuadrado();
         _ActualizarPosiciones();
-      } else if (y < 0) {
-        print('ARRIBA');
+        funcEscalar();
+      } else if (y < -1000) {
+        print('ARRIBA $y');
         _DeslizarArriba();
         _generarNuevoCuadrado();
         _ActualizarPosiciones();
+        funcEscalar();
       }
     }
   }
@@ -170,12 +209,15 @@ class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
     List<String> posicionesValidas = [];
 
     tableroActual.forEach((key, cuadrado) {
+      if (cuadrado.nuevo) cuadrado.nuevo = false;
       if (cuadrado.valor == 0) {
         posicionesValidas.add(key);
       }
     });
 
     if (posicionesValidas.isEmpty) {
+      // TODO AQUI HAY QUE HACER TRANSACCION DE BORRAR PARTIDA GUARDADA Y PONERLA EN PARTIDA
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -251,7 +293,11 @@ class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
 
       if (posicionesValidas.contains(posicion)) {
         print('Posicion encontrada: $posicion');
-        tableroActual[posicion] = Cuadrado(valor: 2, posicion: posicion);
+        tableroActual[posicion] = Cuadrado(
+          valor: 2,
+          posicion: posicion,
+          nuevo: true,
+        );
         encontrado = true;
       }
     }
@@ -285,6 +331,8 @@ class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
     tableroActual[cuadradoSiguiente.posicion] = cuadradoNuevo;
 
     puntuacion += cuadradoNuevo.valor;
+
+    if (cuadradoNuevo.valor > fichaMaxima) fichaMaxima = cuadradoNuevo.valor;
 
     if (puntuacion > mejorPuntuacion) mejorPuntuacion = puntuacion;
 
@@ -435,5 +483,46 @@ class _Juego2048State extends State<Juego2048> with WidgetsBindingObserver {
         }
       }
     }
+  }
+
+  Future<bool?> _showBackDialog() {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Are you sure?'),
+          content: const Text('Are you sure you want to leave this page?'),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Guardar y salir'),
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Salir sin guardar'),
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.pop(context, null);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

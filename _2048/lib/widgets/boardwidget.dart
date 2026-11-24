@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:math';
 
 import 'package:_2048/models/colores.dart';
 import 'package:_2048/services/preferenciasservice.dart';
+import 'package:_2048/widgets/tilewidget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,7 +13,7 @@ import '../models/tablero.dart';
 import '../routes.dart';
 
 class BoardWidget extends StatelessWidget {
-  final List<Container> gridVisual;
+  final List<TileWidget> gridVisual;
 
   GestureDragEndCallback? onHorizontalDragEnd;
   GestureDragEndCallback? onVerticalDragEnd;
@@ -23,16 +25,15 @@ class BoardWidget extends StatelessWidget {
     required this.onVerticalDragEnd,
   });
 
-  final colores = obtenerEsquemaColoresActual(
-    PreferenciasService.instanciaPS.obtenerTemaOscuro(),
-  );
-
-  late Color colorTablero = colores[NombreColores.superficie]!;
-
-  late Color colorBorde = colores[NombreColores.bordes]!;
-
   @override
   Widget build(BuildContext context) {
+    final colores = obtenerEsquemaColoresActual(
+      PreferenciasService.instanciaPS.obtenerTemaOscuro(context),
+    );
+    Color colorTablero = colores[NombreColores.superficie]!;
+
+    Color colorBorde = colores[NombreColores.bordes]!;
+
     return GestureDetector(
       onHorizontalDragEnd: onHorizontalDragEnd,
       onVerticalDragEnd: onVerticalDragEnd,

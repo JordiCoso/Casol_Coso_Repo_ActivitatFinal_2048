@@ -93,6 +93,7 @@ class _LoginPageState extends State<LoginPage> {
       }
       //guardamos el ultimo jugador que ha iniciado sesion
       PreferenciasService.instanciaPS.guardarUltimoJugador(usuario.usuario);
+      PreferenciasService.instanciaPS.guardarUsuarioId(usuario.id as int);
       context.goNamed(Rutas.principal, extra: usuario);
     } catch (e) {
       if (!mounted) return;

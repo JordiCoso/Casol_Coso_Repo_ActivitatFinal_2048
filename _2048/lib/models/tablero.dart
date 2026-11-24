@@ -25,16 +25,22 @@ class Tablero {
 
     tamanoTablero = jsonMap['tamanoTablero'] as int? ?? 4;
 
-    loopLineasYColumnas(
-      tamanoTablero,
-      ({required columna, required linea}) =>
-          tablero['$linea$columna'] = jsonMap['$linea$columna'] as Cuadrado,
-    );
+    loopLineasYColumnas(tamanoTablero, ({required columna, required linea}) {
+      tablero['$linea$columna'] = Cuadrado.fromMap(
+        jsonMap['$linea$columna'] as Map<String, Object?>,
+      );
+    });
   }
 
-  String toJson(LinkedHashMap<String, Cuadrado> tableroGuardar) {
-    tablero = tableroGuardar;
-    return jsonEncode(tablero);
+  String toJson(LinkedHashMap<String, Cuadrado> tablero) {
+    LinkedHashMap<String, Map<String, Object?>> tableroGuardar =
+        LinkedHashMap();
+
+    tablero.forEach(
+      (llave, cuadrado) => tableroGuardar[llave] = cuadrado.toMap(),
+    );
+
+    return jsonEncode(tableroGuardar);
   }
 
   /// Para no repetir codigo de pasar por todas las linea/columna,

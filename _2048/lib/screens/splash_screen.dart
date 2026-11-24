@@ -26,68 +26,12 @@ class SplashScreen extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                BotonEsquina(
-                  texto: 'Comenzar',
-                  icono: listaIconos[NombreIconos.ajustes]!,
-                  pulsar: () async {
-                    ThemeMode? modo = await showDialog<ThemeMode>(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          titlePadding: EdgeInsets.all(16),
-                          title: Text(
-                            '¿Cambiar el tema de la app?',
-                            style: Theme.of(context).textTheme.titleMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                          contentPadding: EdgeInsets.all(16),
-
-                          actionsPadding: EdgeInsets.all(16),
-                          actionsAlignment: MainAxisAlignment.center,
-                          actions: [
-                            Column(
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, ThemeMode.light),
-                                  child: Text('Modo claro'),
-                                ),
-
-                                ElevatedButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, ThemeMode.dark),
-                                  child: Text('Modo oscuro'),
-                                ),
-
-                                ElevatedButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, ThemeMode.system),
-                                  child: Text('Tema del sistema'),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    );
-
-                    if (modo == null) return;
-
-                    PreferenciasService.instanciaPS.guardarModoTema(modo);
-                  },
-                ),
-              ],
-            ),
             const Expanded(flex: 3, child: SizedBox()),
             const Image(
-              image: AssetImage('images/logo_2048_sinFondo.png'),
-              height: 150,
-              width: 150,
+              image: AssetImage('images/2048_Icon_App.png'),
+              height: 300,
+              width: 300,
             ),
-            Text('2048', style: Theme.of(context).textTheme.titleLarge),
             const Expanded(flex: 2, child: SizedBox()),
             BotonPrincipal(
               texto: 'Comenzar',

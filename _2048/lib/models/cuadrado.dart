@@ -7,7 +7,8 @@ class Cuadrado {
   late int x = int.parse(posicion[1]);
   late int y = int.parse(posicion[0]);
   bool combinado = false;
-  final int valor;
+  bool nuevo;
+  late final int valor;
 
   String get keyX {
     return posicion[1];
@@ -29,48 +30,16 @@ class Cuadrado {
     y = int.parse(keyY);
   }
 
-  Cuadrado.vacio() : valor = 0, posicion = '00';
+  Cuadrado.vacio() : valor = 0, posicion = '00', nuevo = false;
 
-  Cuadrado({required this.posicion, required this.valor});
+  Cuadrado({required this.posicion, required this.valor, this.nuevo = false});
 
-  void mover(String posicionNueva) {
-    posicion = posicionNueva;
-  }
+  Cuadrado.fromMap(Map<String, Object?> mapa)
+    : this.posicion = mapa['posicion'] as String,
+      valor = mapa['valor'] as int,
+      this.nuevo = false;
 
-  Container toContainer(BuildContext context) {
-    final bool temaOscuro = PreferenciasService.instanciaPS.obtenerTemaOscuro();
-    final colorCuadrado =
-        obtenerEsquemaColoresActual(temaOscuro)['$valor'] ??
-        obtenerEsquemaColoresActual(temaOscuro)[NombreColores.bordes];
-    final numeroClaro = obtenerEsquemaColoresActual(
-      true,
-    )[NombreColores.textoPrincipal]!;
-    final numeroOscuro = obtenerEsquemaColoresActual(
-      false,
-    )[NombreColores.textoPrincipal]!;
-
-    final Color colorTexto = (temaOscuro)
-        ? (valor == 2)
-              ? numeroClaro
-              : numeroOscuro
-        : (valor == 2)
-        ? numeroOscuro
-        : numeroClaro;
-    return Container(
-      decoration: BoxDecoration(
-        color: colorCuadrado,
-        borderRadius: BorderRadius.circular(12),
-      ),
-
-      width: 80,
-      height: 80,
-      child: Center(
-        child: Text(
-          '${(valor != 0) ? valor : ''}',
-          style: Theme.of(context).textTheme.titleMedium
-              ?.copyWith(color: colorTexto),
-        ),
-      ),
-    );
+  Map<String, Object?> toMap() {
+    return {'posicion': posicion, 'valor': valor};
   }
 }
