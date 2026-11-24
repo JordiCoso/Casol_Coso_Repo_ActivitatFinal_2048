@@ -75,44 +75,34 @@ class DatabaseHelper {
 
   // Claves en variables para juntarlas y evitar errores
 
-  static const tablaUsuarios =
-      'usuarios'; // TODO usuarios que se han registrado en la app
+  static const tablaUsuarios = 'usuarios';
 
-  static const columnaUsuariosId = 'id'; // TODO Identificador de la partida
+  static const columnaUsuariosId = 'id';
   static const columnaUsuariosUsuario = 'usuario'; // normalizacion de la tabla
-  static const columnaUsuariosFecharegistro =
-      'fecha_registro'; // TODO FECHA Y HORA ISO 8601
-  static const columnaUsuariosEmail =
-      'email'; // TODO Formato correcto y validado ‘@’
-  static const columnaUsuariosContrasena = 'contrasena'; // TODO ENCRIPTADA
+  static const columnaUsuariosFecharegistro = 'fecha_registro';
+  static const columnaUsuariosEmail = 'email';
+  static const columnaUsuariosContrasena = 'contrasena';
 
-  static const tablaPartidas =
-      'partidas'; // TODO historial de partidas terminadas
+  static const tablaPartidas = 'partidas';
 
-  static const columnaPartidasId = 'id'; // TODO Identificador de la partida
+  static const columnaPartidasId = 'id';
   static const columnaPartidasUsuarioId =
-      'usuario_id'; // TODO Nombre del jugador
-  static const columnaPartidasPuntuacion = 'puntuacion'; // TODO Puntos finales
-  static const columnaPartidasFichamaxima = 'ficha_maxima'; // TODO Valor de la ficha más alta conseguida (2, 4, ..., 2048)
-  static const columnaPartidasMovimientos =
-      'movimientos'; // TODO Número de movimientos realizados
-  static const columnaPartidasDuracionsegundos =
-      'duracion_segundos'; // TODO Duración de la partida
-  static const columnaPartidasFecha =
-      'fecha'; // TODO Fecha y hora en formato ISO 8601
+      'usuario_id'; // normalizacion de la tabla
+  static const columnaPartidasPuntuacion = 'puntuacion';
+  static const columnaPartidasFichamaxima = 'ficha_maxima';
+  static const columnaPartidasMovimientos = 'movimientos';
+  static const columnaPartidasDuracionsegundos = 'duracion_segundos';
+  static const columnaPartidasFecha = 'fecha';
 
-  static const tablaGuardado = 'partida_guardada'; // TODO estado de la partida en curso, para poder continuar al reabrir la aplicación
+  static const tablaGuardado = 'partida_guardada';
 
   static const columnaGuardadoId =
-      'id'; // TODO Siempre 1 (solo existe una partida en curso)
+      'id'; // Siempre 1 (solo existe una partida en curso)
   static const columnaGuardadoUsuarioId = 'usuario_id';
-  static const columnaGuardadoTablero = 'tablero'; // TODO Estado del tablero serializado (por ejemplo, JSON con la lista de 16 valores)
-  static const columnaGuardadoPuntuacion =
-      'puntuacion'; // TODO Puntuación actual
-  static const columnaGuardadoMovimientos =
-      'movimientos'; // TODO Movimientos realizados hasta el momento
-  static const columnaGuardadoSegundostranscurridos =
-      'segundos_transcurridos'; // TODO Tiempo acumulado
+  static const columnaGuardadoTablero = 'tablero';
+  static const columnaGuardadoPuntuacion = 'puntuacion';
+  static const columnaGuardadoMovimientos = 'movimientos';
+  static const columnaGuardadoSegundostranscurridos = 'segundos_transcurridos';
 
   Future<void> creacionBaseDatos(Database db, int version) async {
     final Batch packDeInstrucciones = db.batch();

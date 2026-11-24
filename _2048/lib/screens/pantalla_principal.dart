@@ -47,11 +47,15 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               '${modo ? 'Price' : 'Meowscarada'}\'s version',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-
             const Expanded(flex: 3, child: const SizedBox()),
             BotonPrincipal(
               texto: 'Jugar',
               pulsar: () => context.goNamed(Rutas.juego2048),
+            ),
+            SizedBox(height: 10),
+            BotonPrincipal(
+              texto: 'Cómo se juega',
+              pulsar: () => context.goNamed(Rutas.comoJugar),
             ),
             const SizedBox(height: 10),
             BotonPrincipal(
