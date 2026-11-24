@@ -4,7 +4,9 @@ import 'package:cryptography/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../data/partida_guardada_dao.dart';
 import '../models/iconos.dart';
+import '../models/partida_guardada.dart';
 import '../widgets/boardwidget.dart';
 import '../widgets/boton_esquina.dart';
 import '/models/colores.dart';
@@ -21,6 +23,29 @@ class PantallaPrincipal extends StatefulWidget {
 }
 
 class _PantallaPrincipalState extends State<PantallaPrincipal> {
+  PartidaGuardada? partidaGuardada;
+
+  @override
+  void initState() {
+    super.initState();
+    comprobarPartidaGuardada();
+  }
+
+  //comprobamos si hay una partida guardada
+  Future<void> comprobarPartidaGuardada() async {
+    int? usuarioId = PreferenciasService.instanciaPS.obtenerUsuarioId();
+
+    if (usuarioId != null) {
+      partidaGuardada = await PartidaGuardadaDao().obtenerPartidaGuardada(
+        usuarioId,
+      );
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map<String, Color> colores = obtenerEsquemaColoresActual(
@@ -48,7 +73,7 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
               '${modo ? 'Price' : 'Meowscarada'}\'s version',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            const Expanded(flex: 2,child: const SizedBox()),
+            const Expanded(flex: 2, child: const SizedBox()),
             Image(
               image: modo
                   ? const AssetImage('images/2048_Icon_Dark.png')
@@ -59,8 +84,25 @@ class _PantallaPrincipalState extends State<PantallaPrincipal> {
             const Expanded(flex: 3, child: const SizedBox()),
             BotonPrincipal(
               texto: 'Jugar',
-              pulsar: () => context.goNamed(Rutas.juego2048),
+              pulsar: () async {
+                await context.pushNamed(Rutas.juego2048);
+                comprobarPartidaGuardada();
+              },
             ),
+
+            if (partidaGuardada != null) SizedBox(height: 10),
+
+            if (partidaGuardada != null)
+              BotonPrincipal(
+                texto: 'Continuar partida',
+                pulsar: () async {
+                  await context.pushNamed(
+                    Rutas.juego2048,
+                    extra: partidaGuardada,
+                  );
+                  comprobarPartidaGuardada();
+                },
+              ),
             SizedBox(height: 10),
             BotonPrincipal(
               texto: 'Cómo se juega',

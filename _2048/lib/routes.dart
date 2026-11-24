@@ -12,6 +12,7 @@ import '/screens/detalles_partida_page.dart';
 import '/screens/ranking_page.dart';
 import '/screens/estadisticas_page.dart';
 import '/screens/juego2048.dart';
+import 'models/partida_guardada.dart';
 
 class Rutas {
   static const String parametroDetallePartidaID = 'id';
@@ -89,7 +90,7 @@ final router = GoRouter(
                 GoRoute(
                   path: Rutas.comoJugar,
                   name: Rutas.comoJugar,
-                  builder: (context, state) => ComoJugar(),
+                  builder: (context, state) => ComoJugar(partidaGuardada: state.extra as PartidaGuardada?,),
                 ),
               ],
             ),

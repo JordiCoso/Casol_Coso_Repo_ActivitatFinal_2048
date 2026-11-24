@@ -25,7 +25,12 @@ class Tablero {
 
     tamanoTablero = jsonMap['tamanoTablero'] as int? ?? 4;
 
+    tablero = {};
+    tableroVacio = {};
+
     loopLineasYColumnas(tamanoTablero, ({required columna, required linea}) {
+      tableroVacio['$linea$columna'] = Cuadrado.vacio();
+
       tablero['$linea$columna'] = Cuadrado.fromMap(
         jsonMap['$linea$columna'] as Map<String, Object?>,
       );

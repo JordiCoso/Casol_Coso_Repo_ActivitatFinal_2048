@@ -21,12 +21,12 @@ class PartidaGuardadaDao {
     return resultado;
   }
 
-  //obtenemos la partida guardada si existe
-  Future<PartidaGuardada?> obtenerPartidaGuardada() async {
+  //obtenemos la partida guardada del usuario si existe
+  Future<PartidaGuardada?> obtenerPartidaGuardada(int usuarioId) async {
     final resultado = await _db.query(
       DatabaseHelper.tablaGuardado,
-      where: 'id = ?',
-      whereArgs: [1],
+      where: 'id = ? AND usuario_id = ?',
+      whereArgs: [1, usuarioId],
     );
 
     if (resultado.isNotEmpty) {
@@ -36,11 +36,11 @@ class PartidaGuardadaDao {
     return null;
   }
 
-  Future<int> eliminarPartidaGuardada() async {
+  Future<int> eliminarPartidaGuardada(int usuarioId) async {
     final int resultado = await _db.delete(
       DatabaseHelper.tablaGuardado,
-      where: 'id = ?',
-      whereArgs: [1],
+      where: 'id = ? AND usuario_id = ?',
+      whereArgs: [1, usuarioId],
     );
 
     return resultado;
