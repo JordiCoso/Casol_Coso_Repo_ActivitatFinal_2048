@@ -85,12 +85,12 @@ final router = GoRouter(
                 GoRoute(
                   path: Rutas.juego2048,
                   name: Rutas.juego2048,
-                  builder: (context, state) => Juego2048(),
+                  builder: (context, state) => Juego2048(partidaGuardada: state.extra as PartidaGuardada?,),
                 ),
                 GoRoute(
                   path: Rutas.comoJugar,
                   name: Rutas.comoJugar,
-                  builder: (context, state) => ComoJugar(partidaGuardada: state.extra as PartidaGuardada?,),
+                  builder: (context, state) => ComoJugar(),
                 ),
               ],
             ),
